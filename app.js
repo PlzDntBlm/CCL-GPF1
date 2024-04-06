@@ -1,26 +1,40 @@
 import {startResizing} from "./src/styles/ResizeCanvas.js";
+import {Game} from "./src/scripts/core/Game.js";
 
-window.onload = () => {
+window.onload = async () => {
     init();
 };
+export let myApp;
 
-function init() {
-    let myApp = new App();
+async function init() {
+    myApp = new App();
+    await myApp.Start();
 }
 
 class App {
     constructor() {
+        this.game = null;
         this.context = null;
         this.canvas = {
             width: 256,
             height: 240
         }
         this.assetsPath = "./src/assets/";
-
-        this.addOverlay();
     }
 
-    addOverlay() {
+    async Start() {
+        // Call the function to add the overlay to the document
+        this.setup().then(async () => {
+            this.game = new Game(this);
+            await this.game.Init();
+        });
+    }
+
+    async setup() {
+        await this.addOverlay();
+    }
+
+    async addOverlay() {
         // Create overlay element
         this.overlay = document.createElement("div");
         this.overlay.id = "pxBricks-overlay";
