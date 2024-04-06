@@ -6,6 +6,7 @@ import {TileSet} from "../scenes/Tilemaps/TileSet.js";
 import {myApp} from "../../../app.js";
 import {Ball} from "../entities/Ball.js";
 import {AABB} from "../utils/collider/AABB.js";
+import {CircleCollider} from "../utils/collider/CircleCollider.js";
 
 class Game {
     constructor() {
@@ -42,11 +43,7 @@ class Game {
         this.ball.transform.position.x = 16 * 5;
         this.ball.transform.position.y = 16 * 7;
         this.ball.solid = true;
-        this.ball.collider = new AABB(
-            this.ball.transform.position.x,
-            this.ball.transform.position.y,
-            this.ball.transform.sizeInPixel.x,
-            this.ball.transform.sizeInPixel.y);
+        this.ball.collider = new CircleCollider(this.ball.transform.x, this.ball.transform.y, 8)
         this.ball.Init();
         this.gameObjectManager.addGameObject(this.ball);
 

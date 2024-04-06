@@ -19,7 +19,7 @@ export class Ball extends GameObject {
     }
 
     Init() {
-        this.rigidbody = new Rigidbody(1, 0.001);
+        this.rigidbody = new Rigidbody(1, 0.001); //0.001
         this.rigidbody.transform.position = {...this.transform.position};
         console.log("Assigned Ball position to Rigidbody");
         this.transform.previousPosition = {
@@ -43,8 +43,8 @@ export class Ball extends GameObject {
         this.transform.position.y = this.rigidbody.transform.position.y;
 
         // Update the collider position
-        // this.collider.x = this.transform.position.x;
-        // this.collider.y = this.transform.position.y;
+        this.collider.x = this.transform.position.x;
+        this.collider.y = this.transform.position.y;
 
         // Handle collisions
         // ...

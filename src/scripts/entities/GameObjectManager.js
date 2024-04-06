@@ -1,3 +1,5 @@
+import {myApp} from "../../../app.js";
+
 export class GameObjectManager {
     constructor() {
         this.gameObjects = [];
@@ -38,6 +40,7 @@ export class GameObjectManager {
     RenderGameObjects() {
         this.gameObjects.forEach((gameObject) => {
             gameObject.Render();
+            if (myApp.debug.drawCollider && gameObject.collider && typeof gameObject.collider === 'object') gameObject.collider.draw();
         });
     }
 }

@@ -3,7 +3,7 @@ import {myApp} from "../../../../app.js";
 
 export class CircleCollider extends Collider {
     constructor(x, y, radius) {
-        super(x, y, radius, radius); // Using super to set x, y, and using radius for both width and height for simplicity
+        super(x, y, radius * 2, radius * 2); // Using super to set x, y, and using radius for both width and height for simplicity
         this.radius = radius;
     }
 
@@ -33,7 +33,7 @@ export class CircleCollider extends Collider {
     // Method to draw the CircleCollider for debugging purposes
     draw() {
         myApp.context.beginPath();
-        myApp.context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        myApp.context.arc(this.x + this.radius, this.y + this.radius, 8, 0, Math.PI * 2);// Add radius for offset
         myApp.context.strokeStyle = 'blue';
         myApp.context.stroke();
     }

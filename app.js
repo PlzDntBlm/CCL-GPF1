@@ -20,6 +20,9 @@ class App {
             height: 240
         }
         this.assetsPath = "./src/assets/";
+        this.debug = {
+            drawCollider: true
+        };
     }
 
     async Start() {

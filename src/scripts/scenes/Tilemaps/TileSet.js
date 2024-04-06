@@ -24,7 +24,7 @@ export class TileSet {
             TileSet.SpriteSheet.onerror = (error) => {
                 console.error('Error loading the sprite sheet image:', error);
             };
-            TileSet.SpriteSheet.src = myApp.assetsPath + "images/Pyxel SpriteSheet.png";
+            TileSet.SpriteSheet.src = myApp.assetsPath + "images/Pyxel SpriteSheet_alt.png";
 
             tileSetJson.tileset.tile.forEach((el) => {
                 TileSet.TileSet.push({

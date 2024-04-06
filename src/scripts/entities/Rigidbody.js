@@ -4,7 +4,7 @@ export class Rigidbody {
         this.gravityScale = gravityScale;
         this.velocity = {x: 0, y: 0};
         this.isGrounded = false;
-        this.terminalVelocity = -2; // The negative value represents downward speed.
+        this.terminalVelocity = -1; // The negative value represents downward speed.
         this.transform = {
             position: {
                 x: 0,
