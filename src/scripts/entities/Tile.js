@@ -14,6 +14,7 @@ export class Tile extends GameObject {
         data.tile.position = data.tile.position || {};
         data.tile.position.row = data.tile.position.row || 0;
         data.tile.position.col = data.tile.position.col || 0;
+        data.solid = data.solid || false;
 
         this.tile = data.tile;
         //this.setTileType(data.tile.type);

@@ -11,7 +11,7 @@ export class GameLoop {
 
     static FrameCounter = 0;
 
-    GameLoop(timestamp) {
+    GameLoop(timestamp = 0) {
         let deltaTime = timestamp - this.lastRenderTime;
         this.lastRenderTime = timestamp;
         this.accumulatedTime += deltaTime;

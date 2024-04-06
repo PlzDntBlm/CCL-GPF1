@@ -1,10 +1,11 @@
 import {GameLoop} from "./GameLoop.js";
 import {GameObjectManager} from "../entities/GameObjectManager.js";
-import {Player} from "../entities/Player.js";
 //import {Tile} from "./src/entities/Tile.js";
 import {Scene} from "../scenes/Scene.js";
 import {TileSet} from "../scenes/Tilemaps/TileSet.js";
 import {myApp} from "../../../app.js";
+import {Ball} from "../entities/Ball.js";
+import {AABB} from "../utils/collider/AABB.js";
 
 class Game {
     constructor() {
@@ -31,22 +32,28 @@ class Game {
         await this.tileSet.loadTilesetFromFile();
     }
 
-    async StartGameLoop() {
+    async Instantiate() {
         let scene = new Scene(myApp);
 
         // Initialize game entities
 
-        // Initialize player
-        this.player = new Player();
-        this.player.transform.position.x = 16 * 3.5;
-        this.player.transform.position.y = 16 * 7;
-        this.gameObjectManager.addGameObject(this.player);
+        // Initialize Ball
+        this.ball = new Ball();
+        this.ball.transform.position.x = 16 * 5;
+        this.ball.transform.position.y = 16 * 7;
+        this.ball.solid = true;
+        this.ball.collider = new AABB(
+            this.ball.transform.position.x,
+            this.ball.transform.position.y,
+            this.ball.transform.sizeInPixel.x,
+            this.ball.transform.sizeInPixel.y);
+        this.ball.Init();
+        this.gameObjectManager.addGameObject(this.ball);
 
         // Initialize tiles
         await scene.loadScene().then(() => {
             this.gameObjectManager.addGameObjects(scene.tileMap);
         });
-        console.log(this.gameObjectManager.gameObjects)
 
 
         //const enemies = createEnemies();
@@ -56,13 +63,13 @@ class Game {
 
         // Initialize other necessary game components
         // ...
-
-        // Instantiate and start the game loop
-        this.gameLoop.GameLoop();
     }
 
-    startGame() {
-        this.StartGameLoop();
+    async startGame() {
+        await this.Instantiate().then(() => {
+            // Instantiate and start the game loop
+            this.gameLoop.GameLoop();
+        })
     }
 }
 
