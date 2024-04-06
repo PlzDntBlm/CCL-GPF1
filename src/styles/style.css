@@ -1,0 +1,27 @@
+html {
+    background-color: black;
+    font-family: Consolas, monospace;
+    color: greenyellow;
+    font-size: 2vh;
+
+    image-rendering: optimizeSpeed; /* Older versions of FF          */
+    image-rendering: -moz-crisp-edges; /* FF 6.0+                       */
+    image-rendering: -webkit-optimize-contrast; /* Safari                        */
+    image-rendering: -o-crisp-edges; /* OS X & Windows Opera (12.02+) */
+    image-rendering: pixelated; /* Awesome future-browsers       */
+    -ms-interpolation-mode: nearest-neighbor; /* IE                            */
+}
+
+html::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    filter: brightness(50%); /* Adjust the brightness */
+    z-index: -1;
+    background-image: url("../assets/images/TilableBackground.png");
+    background-size: 64px;
+    background-repeat: repeat;
+}

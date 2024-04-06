@@ -1,0 +1,30 @@
+#pxBricks-overlay {
+    position: fixed;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /*background-color: rgba(0, 0, 0, 0.7); !* You can adjust the opacity here *!*/
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+#pxBricks-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    background-color: black; /* Adjust canvas background color as needed */
+}
+
+#pxBricks-canvas {
+    image-rendering: optimizeSpeed; /* Older versions of FF          */
+    image-rendering: -moz-crisp-edges; /* FF 6.0+                       */
+    image-rendering: -webkit-optimize-contrast; /* Safari                        */
+    image-rendering: -o-crisp-edges; /* OS X & Windows Opera (12.02+) */
+    image-rendering: pixelated; /* Awesome future-browsers       */
+    -ms-interpolation-mode: nearest-neighbor; /* IE                            */
+}
+
+/* Styling for the canvas */

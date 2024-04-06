@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset version="1.10" tiledversion="1.10.2" name="Px2D Tileset" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+ <image source="../Pyxel Spritesheet.png" width="256" height="256"/>
+ <tile id="0" type="Missing"/>
+ <tile id="1" type="Wall_Brick_TopLeft_OuterCorner_Floor"/>
+ <tile id="2" type="Wall_Brick_Top_Outer_Floor"/>
+ <tile id="3" type="Wall_Brick_TopRight_OuterCorner_Floor"/>
+ <tile id="4" type="Wall_Brick_TopLeft_InnerCorner_Rounded"/>
+ <tile id="5" type="Wall_Brick_Top_InnerCorner_Rounded"/>
+ <tile id="6" type="Wall_Brick_TopRight_InnerCorner_Rounded"/>
+ <tile id="7" type="Wall_Brick_TopLeft_Half_Floor"/>
+ <tile id="8" type="Wall_Brick_Top_Half_Floor"/>
+ <tile id="9" type="Wall_Brick_TopRight_Half_Floor"/>
+ <tile id="17" type="Wall_Brick_Left_Outer"/>
+ <tile id="18" type="Wall_Brick_Middle"/>
+ <tile id="19" type="Wall_Brick_Right_Outer"/>
+ <tile id="20" type="Wall_Brick_Left_InnerCorner_Rounded"/>
+ <tile id="21" type="Wall_Brick_Middle_InnerCorner_Rounded"/>
+ <tile id="22" type="Wall_Brick_Right_InnerCorner_Rounded"/>
+ <tile id="23" type="Wall_Brick_Left_Half_Floor"/>
+ <tile id="24" type="Wall_Brick_Bottom_Half_Floor"/>
+ <tile id="25" type="Wall_Brick_TopLeft-BottomRight_Quarter_Floor"/>
+ <tile id="33" type="Wall_Brick_BottomLeft_OuterCorner"/>
+ <tile id="34" type="Wall_Brick_Bottom_OuterCeiling"/>
+ <tile id="35" type="Wall_Brick_BottomRight_OuterCorner"/>
+ <tile id="36" type="Wall_Brick_Bottom_InnerCorner_Rounded"/>
+ <tile id="37" type="Wall_Brick_Bottom_InnerCorner_Rounded"/>
+ <tile id="38" type="Wall_Brick_BottomRight_InnerCorner_Rounded"/>
+ <tile id="39" type="Wall_Brick_Right_Half_Floor"/>
+ <tile id="40" type="Wall_Brick_Top_Half_Floor"/>
+ <tile id="41" type="Wall_Brick_TopRight-BottomLeft_Quarter_Floor"/>
+ <tile id="49" type="Wall_Brick_Single"/>
+ <tile id="50" type="Wall_Brick_TopLeft_OuterCorner_Floor_AND_Wall_Brick_Left_Outer"/>
+ <tile id="51" type="Wall_Brick_Top_Outer_Floor_2"/>
+ <tile id="52" type="Wall_Brick_TopRight_OuterCorner_Floor_AND_Wall_Brick_Right_Outer"/>
+ <tile id="53" type="Wall_Brick_BottomRight_OuterCorner_Below"/>
+ <tile id="54" type="Wall_Brick_BottomLeft_OuterCorner_Below"/>
+ <tile id="71" type="Wall_Brick_Up_Stairs"/>
+ <tile id="72" type="Wall_Brick_Down_Stairs"/>
+</tileset>
