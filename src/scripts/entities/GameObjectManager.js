@@ -4,7 +4,8 @@ import {AABB} from "../utils/collider/AABB.js";
 import {GameObject} from "./GameObject.js";
 
 export class GameObjectManager {
-    static Instance= null;
+    static Instance = null;
+
     constructor() {
         this.gameObjects = [];
         GameObjectManager.Instance = this;
@@ -53,24 +54,31 @@ export class GameObjectManager {
                     const result = objB.collider.intersectsCircle(objA.collider);
                     if (result.intersects) {
                         // Collision detected
-                        GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
-                        console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        
+                        if (myApp.debug.logCollisions) {
+                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        }
                     }
                 } else if (objA.collider instanceof AABB && objB.collider instanceof CircleCollider) {
                     // If objA is an AABB and objB is a Circle
                     const result = objA.collider.intersectsCircle(objB.collider);
                     if (result.intersects) {
                         // Collision detected
-                        GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
-                        console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        if (myApp.debug.logCollisions) {
+                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        }
                     }
                 } else if (objA.collider instanceof AABB && objB.collider instanceof AABB) {
                     // If both objA and objB are AABBs
                     const result = objA.collider.intersects(objB.collider);
                     if (result.intersects) {
                         // Collision detected
-                        GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
-                        console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        if (myApp.debug.logCollisions) {
+                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        }
                     }
                 }
             }
@@ -79,7 +87,7 @@ export class GameObjectManager {
 
 
     static drawGizmo(x, y, color = 'greenyellow') {
-        if (myApp.debug.drawGizmo){
+        if (myApp.debug.drawGizmo) {
             let gizmo = new GameObject(
                 {
                     transform: {
@@ -88,7 +96,7 @@ export class GameObjectManager {
                             y: y
                         },
                         sizeInPixel: {
-                            x:3
+                            x: 3
                         }
                     },
                     renderer: {
