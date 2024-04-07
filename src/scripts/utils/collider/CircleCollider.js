@@ -16,7 +16,7 @@ export class CircleCollider extends Collider {
         return distance < this.radius + other.radius;
     }
 
-    // Checks if this Circle collides with an AABB
+    // Checks if this Circle collides with an AABB and returns the collision point
     intersectsAABB(aabb) {
         // Find the closest point on the AABB to the circle's center
         const closestX = Math.max(aabb.x, Math.min(this.x, aabb.x + aabb.width));
@@ -27,8 +27,26 @@ export class CircleCollider extends Collider {
         const dy = this.y - closestY;
 
         // If the distance is less than the circle's radius, an intersection occurs
-        return (dx * dx + dy * dy) < (this.radius * this.radius);
+        const distanceSquared = (dx * dx + dy * dy);
+        const intersects = distanceSquared < (this.radius * this.radius);
+
+        // If there is an intersection, calculate the exact collision point
+        if (intersects) {
+            const distance = Math.sqrt(distanceSquared);
+            const collisionPoint = {
+                x: closestX + dx / distance * this.radius,
+                y: closestY + dy / distance * this.radius
+            };
+            if(isNaN(collisionPoint.x) || isNaN(collisionPoint.y)){
+                console.log(closestX,closestY,dx,dy,distanceSquared,intersects)
+                this.promptCollisionDetails(collisionPoint);
+            }
+            return {intersects: true, collisionPoint};
+        }
+
+        return {intersects: false};
     }
+
 
     // Method to draw the CircleCollider for debugging purposes
     draw() {

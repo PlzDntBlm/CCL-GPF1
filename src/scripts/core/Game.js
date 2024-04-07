@@ -33,7 +33,7 @@ class Game {
         await this.tileSet.loadTilesetFromFile();
     }
 
-    async Instantiate() {
+    async Populate() {
         let scene = new Scene(myApp);
 
         // Initialize game entities
@@ -63,7 +63,7 @@ class Game {
     }
 
     async startGame() {
-        await this.Instantiate().then(() => {
+        await this.Populate().then(() => {
             // Instantiate and start the game loop
             this.gameLoop.GameLoop();
         })

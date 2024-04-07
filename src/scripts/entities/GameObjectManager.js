@@ -4,8 +4,11 @@ import {AABB} from "../utils/collider/AABB.js";
 import {GameObject} from "./GameObject.js";
 
 export class GameObjectManager {
+    static Instance = null;
+
     constructor() {
         this.gameObjects = [];
+        GameObjectManager.Instance = this;
         console.log("Constructed GameObjectManager");
     }
 
@@ -46,42 +49,64 @@ export class GameObjectManager {
                 let objA = this.gameObjects[i];
                 let objB = this.gameObjects[j];
 
-                // Insert logging to verify the collision check is running
-                //console.log('Checking collision between', objA, 'and', objB);
-
                 if (objA.collider instanceof CircleCollider && objB.collider instanceof AABB) {
-                    if (objA.collider.intersectsAABB(objB.collider)) {
-                        console.log('Collision detected between', objA, 'and', objB);
-                        objA.OnCollision(objB);
-                        this.drawHitMarker(objB.transform.position.x, objB.transform.position.y)
+                    // If objA is a Circle and objB is an AABB
+                    const result = objB.collider.intersectsCircle(objA.collider);
+                    if (result.intersects) {
+                        // Collision detected
+                        
+                        if (myApp.debug.logCollisions) {
+                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        }
                     }
                 } else if (objA.collider instanceof AABB && objB.collider instanceof CircleCollider) {
-                    if (objB.collider.intersectsAABB(objA.collider)) {
-                        console.log('Collision detected between', objA, 'and', objB);
-                        objB.OnCollision(objA);
+                    // If objA is an AABB and objB is a Circle
+                    const result = objA.collider.intersectsCircle(objB.collider);
+                    if (result.intersects) {
+                        // Collision detected
+                        if (myApp.debug.logCollisions) {
+                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        }
+                    }
+                } else if (objA.collider instanceof AABB && objB.collider instanceof AABB) {
+                    // If both objA and objB are AABBs
+                    const result = objA.collider.intersects(objB.collider);
+                    if (result.intersects) {
+                        // Collision detected
+                        if (myApp.debug.logCollisions) {
+                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                        }
                     }
                 }
             }
         }
     }
 
-    drawHitMarker(x, y) {
-        let gizmo = new GameObject(
-            {
-                transform: {
-                    position: {
-                        x: x,
-                        y: y
+
+    static drawGizmo(x, y, color = 'greenyellow') {
+        if (myApp.debug.drawGizmo) {
+            let gizmo = new GameObject(
+                {
+                    transform: {
+                        position: {
+                            x: x,
+                            y: y
+                        },
+                        sizeInPixel: {
+                            x: 3
+                        }
                     },
-                    sizeInPixel: 2
-                },
-                renderer: {
-                    drawMode: "circle",
-                    fillColor: "green"
+                    renderer: {
+                        drawMode: "circle",
+                        fillColor: color
+                    }
                 }
-            }
-        );
-        this.addGameObject(gizmo);
+            );
+            GameObjectManager.Instance.addGameObject(gizmo);
+        }
     }
 
     RenderGameObjects() {

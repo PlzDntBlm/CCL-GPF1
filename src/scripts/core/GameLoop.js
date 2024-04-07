@@ -2,14 +2,13 @@ import {myApp} from "../../../app.js";
 import {Game} from "./Game.js";
 
 export class GameLoop {
+    static FrameCounter = 0;
     constructor() {
         this.lastRenderTime = 0;
         this.accumulatedTime = 0;
         this.fixedTimeStep = 1000 / 60; // 60 updates per second
         console.log("Constructed GameLoop")
     }
-
-    static FrameCounter = 0;
 
     GameLoop(timestamp = 0) {
         let deltaTime = timestamp - this.lastRenderTime;

@@ -54,7 +54,7 @@ export class GameObject {
         if (this.renderer.drawMode === 'circle') {
             myApp.context.beginPath();
             myApp.context.arc(this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x / 2, 0, Math.PI * 2);
-            myApp.context.strokeStyle = 'green';
+            myApp.context.strokeStyle = this.renderer.fillColor;
             myApp.context.stroke();
         }
     }
