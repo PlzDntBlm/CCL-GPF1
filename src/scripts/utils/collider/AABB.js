@@ -9,6 +9,7 @@ export class AABB extends Collider {
             this.y < other.y + other.height &&
             this.y + this.height > other.y);
     }
+
     // Checks if this AABB collides with a CircleCollider
     intersectsCircle(circle) {
         // Find the closest point on the AABB to the circle's center
@@ -30,7 +31,7 @@ export class AABB extends Collider {
             let collisionPoint = {};
             // If the distance is zero, the collision point is the same as the closest point on the AABB
             if (distance === 0) {
-                collisionPoint = { x: closestX, y: closestY };
+                collisionPoint = {x: closestX, y: closestY};
             } else {
                 collisionPoint = {
                     x: circle.x - (dx / distance) * circle.radius,
@@ -38,14 +39,14 @@ export class AABB extends Collider {
                 };
             }
 
-            if(isNaN(collisionPoint.x) || isNaN(collisionPoint.y)){
+            if (isNaN(collisionPoint.x) || isNaN(collisionPoint.y)) {
                 this.promptCollisionDetails(collisionPoint);
             }
-            return { intersects: true, collisionPoint };
+            return {intersects: true, collisionPoint};
         }
 
         // If no intersection, return intersects as false and collisionPoint as null
-        return { intersects: false, collisionPoint: null };
+        return {intersects: false, collisionPoint: null};
     }
 
     // Update the position of the AABB
@@ -59,6 +60,7 @@ export class AABB extends Collider {
         this.x += velocity.x * deltaTime;
         this.y += velocity.y * deltaTime;
     }
+
 
     // A method to draw the AABB for debugging purposes
     draw() {

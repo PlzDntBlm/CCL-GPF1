@@ -33,12 +33,18 @@ export class CircleCollider extends Collider {
         // If there is an intersection, calculate the exact collision point
         if (intersects) {
             const distance = Math.sqrt(distanceSquared);
-            const collisionPoint = {
-                x: closestX + dx / distance * this.radius,
-                y: closestY + dy / distance * this.radius
-            };
-            if(isNaN(collisionPoint.x) || isNaN(collisionPoint.y)){
-                console.log(closestX,closestY,dx,dy,distanceSquared,intersects)
+            let collisionPoint = {};
+            if (distance === 0) {
+                collisionPoint = {x: closestX, y: closestY};
+            } else {
+                collisionPoint = {
+                    x: closestX + dx / distance * this.radius,
+                    y: closestY + dy / distance * this.radius
+                }
+            }
+            ;
+            if (isNaN(collisionPoint.x) || isNaN(collisionPoint.y)) {
+                if (myApp.debug.logCollisionErrors) console.warn(closestX, closestY, dx, dy, distanceSquared, intersects)
                 this.promptCollisionDetails(collisionPoint);
             }
             return {intersects: true, collisionPoint};

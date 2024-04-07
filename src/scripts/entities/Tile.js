@@ -52,6 +52,11 @@ export class Tile extends GameObject {
         this.collider = new AABB(this.transform.position.x, this.transform.position.y, 16, 16);
     }
 
+    OnCollision(other) {
+
+    }
+
+
     Render() {
         //console.log(this);
         // Draw on column

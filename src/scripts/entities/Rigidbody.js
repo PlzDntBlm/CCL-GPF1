@@ -39,6 +39,10 @@ export class Rigidbody {
         this.transform.position.x += this.velocity.x * deltaTime;
         this.transform.position.y += this.velocity.y * deltaTime;
 
+        // Round positions after physics update
+        this.transform.position.x = Math.round(this.transform.position.x);
+        this.transform.position.y = Math.round(this.transform.position.y);
+
         // Apply gravity each frame
         this.applyGravity();
 

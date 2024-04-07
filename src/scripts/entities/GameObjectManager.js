@@ -44,45 +44,53 @@ export class GameObjectManager {
     }
 
     handleCollisions() {
+        let processedCollisions = new Set();
+
         for (let i = 0; i < this.gameObjects.length; i++) {
             for (let j = i + 1; j < this.gameObjects.length; j++) {
                 let objA = this.gameObjects[i];
                 let objB = this.gameObjects[j];
 
+                // Create a unique identifier for the collision pair
+                let collisionId = `${Math.min(objA.id, objB.id)}-${Math.max(objA.id, objB.id)}`;
+
+                // Skip this pair if the collision has already been processed
+                if (processedCollisions.has(collisionId)) {
+                    continue;
+                }
+
+                // Check for collisions and process them
+                let result = null;
+
                 if (objA.collider instanceof CircleCollider && objB.collider instanceof AABB) {
-                    // If objA is a Circle and objB is an AABB
-                    const result = objB.collider.intersectsCircle(objA.collider);
-                    if (result.intersects) {
-                        // Collision detected
-                        
-                        if (myApp.debug.logCollisions) {
-                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
-                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
-                        }
-                    }
+                    result = objA.collider.intersectsAABB(objB.collider);
                 } else if (objA.collider instanceof AABB && objB.collider instanceof CircleCollider) {
-                    // If objA is an AABB and objB is a Circle
-                    const result = objA.collider.intersectsCircle(objB.collider);
-                    if (result.intersects) {
-                        // Collision detected
-                        if (myApp.debug.logCollisions) {
-                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
-                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
-                        }
-                    }
+                    result = objB.collider.intersectsAABB(objA.collider);
                 } else if (objA.collider instanceof AABB && objB.collider instanceof AABB) {
-                    // If both objA and objB are AABBs
-                    const result = objA.collider.intersects(objB.collider);
-                    if (result.intersects) {
-                        // Collision detected
-                        if (myApp.debug.logCollisions) {
-                            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
-                            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
-                        }
-                    }
+                    result = objA.collider.intersects(objB.collider);
+                }
+
+                // If a collision is detected, handle it
+                if (result && result.intersects) {
+                    // Log collision if debugging is enabled
+                    if (myApp.debug.logCollisions) console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+                    if (myApp.debug.drawCollisionPoints) GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+                    if (myApp.debug.logCollisionPoints) console.log(result.collisionPoint);
+
+
+                    // Call collision handlers for both objects
+                    objA.OnCollision(objB, result.collisionPoint);
+                    //console.log(objB)
+                    objB.OnCollision(objA, result.collisionPoint);
+
+                    // Add this pair to the set of processed collisions
+                    processedCollisions.add(collisionId);
                 }
             }
         }
+
+        // Clear the processedCollisions set for the next update cycle
+        processedCollisions.clear();
     }
 
 

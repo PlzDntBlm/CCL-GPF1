@@ -1,4 +1,5 @@
 import {GameObjectManager} from "../../entities/GameObjectManager.js";
+import {myApp} from "../../../../app.js";
 
 export class Collider {
     constructor(x, y, width, height) {
@@ -7,8 +8,12 @@ export class Collider {
         this.width = width;
         this.height = height;
     }
-    promptCollisionDetails(object= {},collisionPoint = {}){
-        console.log(this.constructor.name + "at position ", {col:this.x/16,row:this.y/16}," has collided at point: ",collisionPoint);
-        GameObjectManager.drawGizmo(this.x+8,this.y+8,'red');
+
+    promptCollisionDetails(object = {}, collisionPoint = {}) {
+        if (myApp.debug.logCollisionErrors) console.warn(this.constructor.name + "at position ", {
+            col: this.x / 16,
+            row: this.y / 16
+        }, " has collided at point: ", collisionPoint);
+        if (myApp.debug.drawCollisionErrors) GameObjectManager.drawGizmo(this.x + 8, this.y + 8, 'red');
     }
 }
