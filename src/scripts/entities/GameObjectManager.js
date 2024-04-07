@@ -51,14 +51,15 @@ export class GameObjectManager {
 
                 if (objA.collider instanceof CircleCollider && objB.collider instanceof AABB) {
                     if (objA.collider.intersectsAABB(objB.collider)) {
-                        console.log('Collision detected between', objA, 'and', objB);
+                        // console.log('Collision detected between', objA, 'and', objB);
                         objA.OnCollision(objB);
-                        this.drawHitMarker(objB.transform.position.x, objB.transform.position.y)
+                        // this.drawHitMarker(objB.transform.position.x, objB.transform.position.y)
                     }
                 } else if (objA.collider instanceof AABB && objB.collider instanceof CircleCollider) {
                     if (objB.collider.intersectsAABB(objA.collider)) {
-                        console.log('Collision detected between', objA, 'and', objB);
+                        // console.log('Collision detected between', objA, 'and', objB);
                         objB.OnCollision(objA);
+                        // this.drawHitMarker(objB.transform.position.x, objB.transform.position.y)
                     }
                 }
             }
