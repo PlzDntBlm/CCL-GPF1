@@ -51,6 +51,12 @@ export class GameObject {
             img.src = myApp.assetsPath + this.renderer.imageSrc;
             myApp.context.drawImage(img, this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
         }
+        if (this.renderer.drawMode === 'circle') {
+            myApp.context.beginPath();
+            myApp.context.arc(this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x / 2, 0, Math.PI * 2);
+            myApp.context.strokeStyle = 'green';
+            myApp.context.stroke();
+        }
     }
 
     /*Render(){

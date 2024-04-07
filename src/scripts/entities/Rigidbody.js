@@ -36,11 +36,8 @@ export class Rigidbody {
 
     Update(deltaTime) {
         // Update position based on velocity
-        //console.log(typeof this.velocity.y, typeof this.transform.position.y, typeof deltaTime)
-        console.log(this.transform.position.y, this.velocity.y)
         this.transform.position.x += this.velocity.x * deltaTime;
         this.transform.position.y += this.velocity.y * deltaTime;
-        //console.log("velocity: ", this.velocity, "position: ", this.transform.position)
 
         // Apply gravity each frame
         this.applyGravity();

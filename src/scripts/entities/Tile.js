@@ -2,6 +2,7 @@ import {GameObject} from "./GameObject.js";
 import {TileSet} from "../scenes/Tilemaps/TileSet.js";
 import {myApp} from "../../../app.js";
 import {GameLoop} from "../core/GameLoop.js";
+import {AABB} from "../utils/collider/AABB.js";
 
 export class Tile extends GameObject {
     constructor(data = {}) {
@@ -16,7 +17,8 @@ export class Tile extends GameObject {
         data.tile.position.col = data.tile.position.col || 0;
         data.solid = data.solid || false;
 
-        this.tile = data.tile;
+        this.tile = data.tile
+        this.collider = this.tile.solid ? new AABB(data.tile.position.x, data.tile.position.y, 16, 16) : null;
         //this.setTileType(data.tile.type);
 
         this.renderer.drawMode = 'texture';
@@ -40,6 +42,14 @@ export class Tile extends GameObject {
             console.log(`Can't convert col:${data.col} and row:${data.row} into PixelCoordinates!`);
             return {x: x, y: y};
         }
+    }
+
+    addCollider() {
+        this.transform.position = Tile.tileCoordinatesToPixelPosition({
+            col: this.tile.position.col,
+            row: this.tile.position.row
+        });
+        this.collider = new AABB(this.transform.position.x, this.transform.position.y, 16, 16);
     }
 
     Render() {

@@ -3,6 +3,7 @@ import {Hub} from "../../assets/scenes/Hub.js";
 import {myApp} from "../../../app.js";
 import {GameObjectManager} from "../entities/GameObjectManager.js";
 import {Game} from "../core/Game.js";
+import {AABB} from "../utils/collider/AABB.js";
 
 export class Scene {
     constructor() {
@@ -23,6 +24,10 @@ export class Scene {
                 tile.tile.type = tileType + 1;
                 tile.tile.position.col = col;
                 tile.tile.position.row = row;
+
+                if (tile.tile.type > 0) {
+                    tile.addCollider();
+                }
 
 
                 tileMap[row * 16 + col] = tile;

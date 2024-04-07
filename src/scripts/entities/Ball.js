@@ -1,6 +1,7 @@
 import {GameObject} from "./GameObject.js";
 import {myApp} from "../../../app.js";
 import {Rigidbody} from "./Rigidbody.js";
+import {AABB} from "../utils/collider/AABB.js";
 
 export class Ball extends GameObject {
     constructor() {
@@ -42,12 +43,23 @@ export class Ball extends GameObject {
         this.transform.position.x = this.rigidbody.transform.position.x;
         this.transform.position.y = this.rigidbody.transform.position.y;
 
-        // Update the collider position
-        this.collider.x = this.transform.position.x;
-        this.collider.y = this.transform.position.y;
+        // Update the collider position to match the new position of the ball
+        this.collider.x = this.transform.position.x + this.collider.radius;
+        this.collider.y = this.transform.position.y + this.collider.radius;
+
 
         // Handle collisions
         // ...
+    }
+
+    OnCollision(other) {
+        // Simple response: reverse the ball's velocity
+        // This is a placeholder; you'll need more complex logic for a real game
+        if (other instanceof AABB) {
+            // Assume a vertical bounce for simplicity
+            this.rigidbody.velocity.y *= -1;
+            console.error("AaAAA")
+        }
     }
 
     Render() {

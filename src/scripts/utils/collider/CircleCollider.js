@@ -33,7 +33,7 @@ export class CircleCollider extends Collider {
     // Method to draw the CircleCollider for debugging purposes
     draw() {
         myApp.context.beginPath();
-        myApp.context.arc(this.x + this.radius, this.y + this.radius, 8, 0, Math.PI * 2);// Add radius for offset
+        myApp.context.arc(this.x, this.y, 8, 0, Math.PI * 2);
         myApp.context.strokeStyle = 'blue';
         myApp.context.stroke();
     }

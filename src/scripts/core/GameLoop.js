@@ -21,16 +21,18 @@ export class GameLoop {
             this.accumulatedTime -= this.fixedTimeStep;
         }
 
-        this.Update(deltaTime);
-        this.Render();
+        this.Update(deltaTime); // Updates positions of all game objects
+        this.HandleCollisions(); // Checks and handles collisions
+        this.Render(); // Renders the game objects to the canvas
 
-        requestAnimationFrame((timestamp) => this.GameLoop(timestamp));
+        requestAnimationFrame((timestamp) => this.GameLoop(timestamp)); // Sets up the next call to gameLoop
     }
 
     Update(deltaTime) {
         // Update game entities and logic based on variable deltaTime
-        if (Game)
+        if (Game) {
             Game.Instance.gameObjectManager.UpdateGameObjects(deltaTime);
+        }
     }
 
     FixedUpdate(fixedDeltaTime) {
@@ -43,5 +45,9 @@ export class GameLoop {
         // Clear canvas and draw game entities
         myApp.context.clearRect(0, 0, myApp.overlay.firstChild.width, myApp.overlay.firstChild.height);
         Game.Instance.gameObjectManager.RenderGameObjects(myApp);
+    }
+
+    HandleCollisions() {
+        Game.Instance.gameObjectManager.handleCollisions();
     }
 }
