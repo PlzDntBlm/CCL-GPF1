@@ -4,11 +4,32 @@ import {myApp} from "../../../../app.js";
 export class AABB extends Collider {
     // Checks if this AABB collides with another AABB
     intersects(other) {
-        return (this.x < other.x + other.width &&
+        const intersects = (this.x < other.x + other.width &&
             this.x + this.width > other.x &&
             this.y < other.y + other.height &&
             this.y + this.height > other.y);
+
+        let collisionPoint = null;
+        if (intersects) {
+            // Calculate the edges of the overlap
+            const left = Math.max(this.x, other.x);
+            const right = Math.min(this.x + this.width, other.x + other.width);
+            const top = Math.max(this.y, other.y);
+            const bottom = Math.min(this.y + this.height, other.y + other.height);
+
+            // Use the midpoint of the edges as the collision point
+            collisionPoint = {
+                x: (left + right) / 2,
+                y: (top + bottom) / 2
+            };
+        }
+
+        return {
+            intersects: intersects,
+            collisionPoint: collisionPoint
+        };
     }
+
 
     // Checks if this AABB collides with a CircleCollider
     intersectsCircle(circle) {

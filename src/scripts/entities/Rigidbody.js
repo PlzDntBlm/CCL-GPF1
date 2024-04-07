@@ -1,52 +1,61 @@
 export class Rigidbody {
-    constructor(mass, gravityScale) {
+    constructor(mass, gravityScale, drag = 0.1) {
         this.mass = mass;
         this.gravityScale = gravityScale;
+        this.drag = drag;
+        // Initial velocity set to zero
         this.velocity = {x: 0, y: 0};
+        // Flag to check if the object is on the ground
         this.isGrounded = false;
-        this.terminalVelocity = -1; // The negative value represents downward speed.
+        // Terminal velocity, positive for downward speed to match gravity's direction
+        this.terminalVelocity = 9.81; // Adjust as needed
+        // Transform to track the position of the object
         this.transform = {
-            position: {
-                x: 0,
-                y: 0
-            }
-        }
-        this.velocity = {
-            x: 0,
-            y: 0
-        }
+            position: {x: 0, y: 0}
+        };
     }
 
-    applyGravity() {
+    applyGravity(deltaTime) {
         if (!this.isGrounded) {
-            this.velocity.y += 9.81 * this.gravityScale; // Apply gravity force
-            // Clamp the velocity to not exceed the terminal velocity
-            this.velocity.y = Math.min(this.velocity.y, -this.terminalVelocity);
+            // Apply gravity force
+            this.velocity.y += 9.81 * this.gravityScale * deltaTime;
+            // Clamp the downward velocity to not exceed the terminal velocity
+            if (this.velocity.y > this.terminalVelocity) {
+                this.velocity.y = this.terminalVelocity;
+            }
         }
     }
 
     applyForce(force) {
         this.velocity.x += force.x / this.mass;
         this.velocity.y += force.y / this.mass;
-        // If we are applying a force upwards we might also want to clamp the upward speed
-        if (force.y < 0) {
-            this.velocity.y = Math.min(this.velocity.y, -this.terminalVelocity);
+    }
+
+    applyDrag(deltaTime) {
+        if (!this.isGrounded) {
+            // Apply drag only if the object is not grounded
+            this.velocity.x -= this.velocity.x * this.drag * deltaTime;
+            this.velocity.y -= this.velocity.y * this.drag * deltaTime;
         }
+
+        // Threshold for stopping completely to avoid floating-point drift
+        if (Math.abs(this.velocity.x) < 0.01) this.velocity.x = 0;
+        if (Math.abs(this.velocity.y) < 0.01) this.velocity.y = 0;
     }
 
     Update(deltaTime) {
+        // Apply gravity
+        this.applyGravity(deltaTime);
+
+        // Apply drag
+        this.applyDrag(deltaTime);
+
         // Update position based on velocity
         this.transform.position.x += this.velocity.x * deltaTime;
         this.transform.position.y += this.velocity.y * deltaTime;
 
-        // Round positions after physics update
-        this.transform.position.x = Math.round(this.transform.position.x);
-        this.transform.position.y = Math.round(this.transform.position.y);
-
-        // Apply gravity each frame
-        this.applyGravity();
-
-        // Collision detection logic
-        // ...
+        // Optionally, round positions if required for pixel-perfect placement
+        //this.transform.position.x = Math.round(this.transform.position.x);
+        //this.transform.position.y = Math.round(this.transform.position.y);
     }
 }

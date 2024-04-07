@@ -7,6 +7,7 @@ import {myApp} from "../../../app.js";
 import {Ball} from "../entities/Ball.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {CircleCollider} from "../utils/collider/CircleCollider.js";
+import {Paddle} from "../entities/Paddle.js";
 
 class Game {
     constructor() {
@@ -38,6 +39,11 @@ class Game {
 
         // Initialize game entities
 
+        // Initialize Paddle
+        this.paddle = new Paddle();
+        this.paddle.Init();
+        this.gameObjectManager.addGameObject(this.paddle);
+
         // Initialize Ball
         this.ball = new Ball();
         this.ball.transform.position.x = 16 * 5;
@@ -56,7 +62,7 @@ class Game {
         //const enemies = createEnemies();
 
         // Setup input handlers
-        //setupInputHandling();
+        this.SetupInputHandling();
 
         // Initialize other necessary game components
         // ...
@@ -67,6 +73,16 @@ class Game {
             // Instantiate and start the game loop
             this.gameLoop.GameLoop();
         })
+    }
+
+    SetupInputHandling() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                Game.Instance.paddle.moveLeft();
+            } else if (e.key === 'ArrowRight') {
+                Game.Instance.paddle.moveRight();
+            }
+        });
     }
 }
 
