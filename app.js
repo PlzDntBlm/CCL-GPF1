@@ -21,7 +21,8 @@ class App {
         }
         this.assetsPath = "./src/assets/";
         this.debug = {
-            drawCollider: true
+            drawCollider: false,
+            drawGizmo: true
         };
     }
 
@@ -56,6 +57,12 @@ class App {
         const canvasDiv = document.querySelector("#canvas");
         canvasDiv.append(this.overlay);
         this.context = document.querySelector("#pxBricks-canvas").getContext("2d");
+
+        this.context.imageSmoothingEnabled = false;
+        this.context.mozImageSmoothingEnabled = false; // For Firefox
+        this.context.webkitImageSmoothingEnabled = false; // For Safari
+        this.context.msImageSmoothingEnabled = false; // For IE
+
         startResizing();
     }
 }
