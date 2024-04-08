@@ -22,13 +22,14 @@ export class Ball extends GameObject {
     }
 
     Init() {
-        this.rigidbody = new Rigidbody(1, 0.0005); //0.001
+        this.rigidbody = new Rigidbody(1, 0); //0.001
         this.rigidbody.transform.position = {...this.transform.position};
         console.log("Assigned Ball position to Rigidbody");
         this.transform.previousPosition = {
             x: this.rigidbody.transform.position.x,
             y: this.rigidbody.transform.position.y
         }
+        this.rigidbody.applyForce({x: -0.01, y: -0.01});
     }
 
     Update(deltaTime) {

@@ -1,5 +1,5 @@
 export class Rigidbody {
-    constructor(mass, gravityScale, drag = 0.1) {
+    constructor(mass, gravityScale, drag = 0) {
         this.mass = mass;
         this.gravityScale = gravityScale;
         this.drag = drag;
@@ -32,15 +32,20 @@ export class Rigidbody {
     }
 
     applyDrag(deltaTime) {
+        // Apply drag only if the object is not grounded
         if (!this.isGrounded) {
-            // Apply drag only if the object is not grounded
-            this.velocity.x -= this.velocity.x * this.drag * deltaTime;
-            this.velocity.y -= this.velocity.y * this.drag * deltaTime;
+            const dragForce = this.drag * deltaTime;
+            this.velocity.x -= dragForce * this.velocity.x;
+            this.velocity.y -= dragForce * this.velocity.y;
+
+            // Ensure velocity is set to 0 if it's too small to prevent drift
+            if (Math.abs(this.velocity.x) < 0.01) this.velocity.x = 0;
+            if (Math.abs(this.velocity.y) < 0.01) this.velocity.y = 0;
         }
 
         // Threshold for stopping completely to avoid floating-point drift
-        if (Math.abs(this.velocity.x) < 0.01) this.velocity.x = 0;
-        if (Math.abs(this.velocity.y) < 0.01) this.velocity.y = 0;
+        //if (Math.abs(this.velocity.x) < 0.01) this.velocity.x = 0;
+        //if (Math.abs(this.velocity.y) < 0.01) this.velocity.y = 0;
     }
 
     Update(deltaTime) {

@@ -123,4 +123,9 @@ export class GameObjectManager {
             if (myApp.debug.drawCollider && gameObject.collider && typeof gameObject.collider === 'object') gameObject.collider.draw();
         });
     }
+    HandleInput(){
+        this.gameObjects.forEach((gameObject) => {
+            gameObject.HandleInput();
+        });
+    }
 }

@@ -58,6 +58,9 @@ export class GameObject {
             myApp.context.stroke();
         }
     }
+    HandleInput(){
+
+    }
 
     /*Render(){
         if(this.renderer.drawMode === 'rect'){

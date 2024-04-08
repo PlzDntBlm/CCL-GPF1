@@ -15,6 +15,14 @@ class Game {
         this.gameLoop = new GameLoop();
         this.tileSet = {};
         Game.Instance = this;
+        this.Input = {
+            Direction : {
+                Vector : {
+                    x:0,
+                    y:0
+                }
+            }
+        }
     }
 
     static Instance = {}
@@ -51,7 +59,7 @@ class Game {
         this.ball.solid = true;
         this.ball.collider = new CircleCollider(this.ball.transform.x, this.ball.transform.y, 8)
         this.ball.Init();
-        this.gameObjectManager.addGameObject(this.ball);
+        //this.gameObjectManager.addGameObject(this.ball);
 
         // Initialize tiles
         await scene.loadScene().then(() => {
@@ -78,9 +86,16 @@ class Game {
     SetupInputHandling() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') {
-                Game.Instance.paddle.moveLeft();
+                Game.Instance.Input.Direction.Vector.x = -1;
             } else if (e.key === 'ArrowRight') {
-                Game.Instance.paddle.moveRight();
+                Game.Instance.Input.Direction.Vector.x = 1;
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') {
+                Game.Instance.Input.Direction.Vector.x = 0;
+            } else if (e.key === 'ArrowRight') {
+                Game.Instance.Input.Direction.Vector.x = 0;
             }
         });
     }

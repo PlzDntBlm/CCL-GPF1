@@ -5,6 +5,7 @@ import {GameLoop} from "../core/GameLoop.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {Rigidbody} from "./Rigidbody.js";
 import {Tile} from "./Tile.js";
+import {Game} from "../core/Game.js";
 
 export class Paddle extends GameObject {
     constructor() {
@@ -25,9 +26,9 @@ export class Paddle extends GameObject {
     }
 
     Init() {
-        this.rigidbody = new Rigidbody(1, 0);
+        this.rigidbody = new Rigidbody(1, 0,1);
         this.rigidbody.terminalVelocity = 0;
-        this.rigidbody.isGrounded = true;
+        this.rigidbody.isGrounded = false;
         this.rigidbody.transform.position = {...this.transform.position};
         console.log("Assigned Rigidbody position to Paddle");
         this.transform.previousPosition = {
@@ -38,58 +39,44 @@ export class Paddle extends GameObject {
 
     OnCollision(other) {
         if (other instanceof Tile) {
-            // Assuming `other` has a method to get its boundaries: left, right, top, bottom
-            const tileLeft = other.x;
-            const tileRight = other.x + other.width;
-            const tileTop = other.y;
-            const tileBottom = other.y + other.height;
-
-            // Paddle's current position
-            const paddleLeft = this.transform.position.x;
-            const paddleRight = this.transform.position.x + this.transform.sizeInPixel.x;
-            const paddleTop = this.transform.position.y;
-            const paddleBottom = this.transform.position.y + this.transform.sizeInPixel.y;
-
-            // Assuming the paddle is moving horizontally only
-            if (this.rigidbody.velocity.x > 0) { // Moving right
-                // If the paddle's left side is colliding with the tile's right side
-                if (paddleLeft < tileRight && paddleRight > tileRight) {
-                    this.transform.position.x = tileRight; // Place the paddle to the right of the tile
-                }
-            } else if (this.rigidbody.velocity.x < 0) { // Moving left
-                // If the paddle's right side is colliding with the tile's left side
-                if (paddleRight > tileLeft && paddleLeft < tileLeft) {
-                    this.transform.position.x = tileLeft - this.transform.sizeInPixel.x; // Place the paddle to the left of the tile
-                }
-            }
-
-            // Stop the paddle's movement as it has collided with a tile
+            // Reset velocity to stop the paddle's movement upon collision
             this.rigidbody.velocity.x = 0;
         }
     }
 
 
+
+
     Update(deltaTime) {
+        // Store the previous position
         this.transform.previousPosition = this.transform.position;
 
+        // Update the paddle based on current forces and velocities
         this.rigidbody.Update(deltaTime);
 
-        // Other player updates such as handling input
-        // ...
-        //this.handleInput();
+        // Apply clamping to ensure the paddle doesn't exceed game boundaries
+        const clampedX = Math.max(16, Math.min(this.transform.position.x, myApp.canvas.width - 16 - this.transform.sizeInPixel.x));
 
-        //this.rigidbody.Update(deltaTime);
-        this.transform.position.x = this.rigidbody.transform.position.x;
-        this.transform.position.y = this.rigidbody.transform.position.y;
+        // If clamping changed the position, ensure the paddle stops moving
+        if (clampedX !== this.transform.position.x) {
+            this.rigidbody.velocity.x = 0;
+        }
 
-        // // Round positions after collision resolution
-        this.transform.position.x = Math.round(this.transform.position.x);
-        this.transform.position.y = Math.round(this.transform.position.y);
+        // Apply the clamped position to ensure the paddle stays within bounds
+        this.transform.position.x = clampedX;
 
-        // Update the collider position to match the new position of the paddle
-        this.collider.x = this.transform.position.x;
-        this.collider.y = this.transform.position.y;
+        // Update the paddle's and its collider's positions to keep everything in sync
+        this.SyncPositionAndCollider();
     }
+
+    SyncPositionAndCollider() {
+        // Sync the paddle's rigidbody and collider positions with its transformed position
+        this.rigidbody.transform.position.x = this.transform.position.x;
+        this.collider.x = this.transform.position.x;
+        // Assuming the y position doesn't change, but you can sync it here as well if needed
+    }
+
+
 
     Render() {
         try {
@@ -102,23 +89,50 @@ export class Paddle extends GameObject {
     }
 
     moveLeft() {
+        console.warn("left")
+        // Prevents moving left if paddle is at the left boundary
+        if (this.transform.position.x <= 16) {
+            this.rigidbody.velocity.x = 0;
+            return;
+        }
+
+        // If trying to move left while moving right, stop the paddle first
         if (this.rigidbody.velocity.x > 0) {
             this.rigidbody.velocity.x = 0;
-        } else {
-            this.rigidbody.applyForce({x: -this.acceleration, y: 0});
-            // Clamp the velocity.x between -5 and 5
-            this.rigidbody.velocity.x = Math.max(-this.maxSpeed, Math.min(this.rigidbody.velocity.x, this.maxSpeed));
         }
+
+        // Apply leftward force and clamp the velocity
+        this.rigidbody.applyForce({x: -this.acceleration, y: 0});
+        console.log(GameLoop.FrameCounter,"Apply Force")
+        this.rigidbody.velocity.x = Math.max(-this.maxSpeed, Math.min(this.rigidbody.velocity.x, this.maxSpeed));
     }
 
     moveRight() {
+        console.warn("right")
+        // Prevents moving right if paddle is at the right game boundary
+        if (this.transform.position.x >= myApp.canvas.width - 16 - this.transform.sizeInPixel.x) {
+            this.rigidbody.velocity.x = 0;
+            console.warn("Returning")
+            return;
+        }
+
+        // If trying to move right while moving left, stop the paddle first
         if (this.rigidbody.velocity.x < 0) {
             this.rigidbody.velocity.x = 0;
-        } else {
-            this.rigidbody.applyForce({x: this.acceleration, y: 0});
-            // Clamp the velocity.x between -5 and 5
-            this.rigidbody.velocity.x = Math.max(-this.maxSpeed, Math.min(this.rigidbody.velocity.x, this.maxSpeed));
         }
+
+        // Apply rightward force and clamp the velocity
+        this.rigidbody.applyForce({x: this.acceleration, y: 0});
+        console.log(GameLoop.FrameCounter,"Apply Force")
+        this.rigidbody.velocity.x = Math.max(-this.maxSpeed, Math.min(this.rigidbody.velocity.x, this.maxSpeed));
     }
 
+
+    HandleInput() {
+        if(Game.Instance.Input.Direction.Vector.x === -1){
+            this.moveLeft();
+        }else if(Game.Instance.Input.Direction.Vector.x === 1){
+            this.moveRight();
+        }
+    }
 }

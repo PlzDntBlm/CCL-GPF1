@@ -20,6 +20,7 @@ export class GameLoop {
             this.accumulatedTime -= this.fixedTimeStep;
         }
 
+        this.HandleInput();
         this.Update(deltaTime); // Updates positions of all game objects
         this.HandleCollisions(); // Checks and handles collisions
         this.Render(); // Renders the game objects to the canvas
@@ -41,6 +42,8 @@ export class GameLoop {
 
     Render() {
         GameLoop.FrameCounter++;
+        //if(myApp.debug.logFrameNumber && GameLoop.FrameCounter%100=== 0)
+        console.log("Frame# ",GameLoop.FrameCounter);
         // Clear canvas and draw game entities
         myApp.context.clearRect(0, 0, myApp.overlay.firstChild.width, myApp.overlay.firstChild.height);
         Game.Instance.gameObjectManager.RenderGameObjects(myApp);
@@ -48,5 +51,9 @@ export class GameLoop {
 
     HandleCollisions() {
         Game.Instance.gameObjectManager.handleCollisions();
+    }
+
+    HandleInput() {
+        Game.Instance.gameObjectManager.HandleInput();
     }
 }
