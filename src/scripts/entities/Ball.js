@@ -158,6 +158,8 @@ export class Ball extends GameObject {
 
     subtractLife() {
         this.boundToPaddle = true;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
         Game.Instance.lifeMinus();
     }
 

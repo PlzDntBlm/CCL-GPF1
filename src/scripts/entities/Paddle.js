@@ -21,13 +21,25 @@ export class Paddle extends GameObject {
 
         this.collider = new AABB(this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
 
+        this.bot = {
+            inputMinTime : 20,
+            inputMaxTime : 250,
+            inputMinTimeOut : 50,
+            inputMaxTimeOut : 1000,
+            nextInputDate :  null
+        };
+        this.bot.inputMinTime = 250;
+        this.bot.inputMinTimeOut = 50;
+        this.bot.inputMaxTimeOut = 1000;
+        this.bot.nextInputDate =  null;
+
         this.acceleration = 200;
         this.maxSpeed = 0.2;
     }
 
     Init() {
         this.rigidbody = new Rigidbody(1, 0);
-        this.rigidbody.drag = 0.008;
+        this.rigidbody.drag = 0.01;
         this.rigidbody.terminalVelocity = 0;
         this.rigidbody.isGrounded = true;
         this.rigidbody.transform.position = {...this.transform.position};
@@ -131,26 +143,85 @@ export class Paddle extends GameObject {
     }
 
     HandleInput() {
-        if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'left' && Game.Instance.Keys.ArrowLeft) {
-            // Ignore left input
-        } else if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'right' && Game.Instance.Keys.ArrowRight) {
-            // Ignore right input
-        } else {
-            // Handle input normally
-            // Assuming left/right movement
-            if (Game.Instance.Keys.ArrowLeft) {
-                this.moveLeft();
-            } else if (Game.Instance.Keys.ArrowRight) {
-                this.moveRight();
+        if(myApp.debug.paddleBot){;
+            if (Date.now() < this.ignoreInputUntil) {
+
+            } else {
+                this.paddleBot()
+            }
+        }else {
+            if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'left' && Game.Instance.Keys.ArrowLeft) {
+                // Ignore left input
+            } else if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'right' && Game.Instance.Keys.ArrowRight) {
+                // Ignore right input
+            } else {
+                // Handle input normally
+                // Assuming left/right movement
+                if (Game.Instance.Keys.ArrowLeft) {
+                    this.moveLeft();
+                } else if (Game.Instance.Keys.ArrowRight) {
+                    this.moveRight();
+                }
             }
         }
         if (Game.Instance.Keys.Space) {
             if (Game.Instance.ball.boundToPaddle) {
                 Game.Instance.ball.boundToPaddle = false;
+                Game.Instance.ball.velocity.y = -1;
             }
         }
     }
 
+    paddleBot() {
+        // Check if it's time for the next input
+        const ballCenter = Game.Instance.ball.transform.position.x + (Game.Instance.ball.transform.sizeInPixel.x / 2);
+        const paddleCenter = this.transform.position.x + (this.transform.sizeInPixel.x / 2);
+
+        // Enhanced Movement Logic: Check for screen boundaries
+        const atLeftEdge = this.transform.position.x <= 16;
+        const atRightEdge = this.transform.position.x + this.transform.sizeInPixel.x >= myApp.canvas.width -16;
+        if (this.bot.nextInputDate === null || Date.now() > this.bot.nextInputDate) {
+
+            if (!atLeftEdge && ballCenter < paddleCenter) {
+                this.applySustainedForce('left');
+            } else if (!atRightEdge && ballCenter > paddleCenter) {
+                this.applySustainedForce('right');
+            }
+
+            // Improved Decision-making: Adjust bot behavior based on position
+            // If at edges, consider slightly moving away from the edge
+            if (atLeftEdge && ballCenter > paddleCenter) {
+                this.applySustainedForce('right');
+            } else if (atRightEdge && ballCenter < paddleCenter) {
+                this.applySustainedForce('left');
+            }
+
+            // Reset or adjust force application based on current action and position
+            this.scheduleNextInput();
+        }
+
+        // Continuously apply force if within the force application period
+        if (this.forceDirection && Date.now() < this.forceEndTime) {
+            if (this.forceDirection === 'right' && !atRightEdge) {
+                this.moveRight();
+            } else if (this.forceDirection === 'left' && !atLeftEdge) {
+                this.moveLeft();
+            }
+        }
+    }
+
+    applySustainedForce(direction) {
+        this.forceDirection = direction;
+        // Set the duration for which the force will be applied
+        const forceDuration = 500; // Force is applied for 500 milliseconds
+        this.forceEndTime = Date.now() + forceDuration;
+    }
+
+    scheduleNextInput() {
+        const timeUntilNextInput = Math.random() * (this.bot.inputMaxTime - this.bot.inputMinTime) + this.bot.inputMinTime;
+        const timeoutDuration = Math.random() * (this.bot.inputMaxTimeOut - this.bot.inputMinTimeOut) + this.bot.inputMinTimeOut;
+        this.bot.nextInputDate = Date.now() + timeUntilNextInput + timeoutDuration;
+    }
 
     updateColliderPosition() {
         // Update the collider position to match the new position of the paddle

@@ -21,7 +21,7 @@ class App {
         }
         this.assetsPath = "./src/assets/";
         this.debug = {
-            log: true,
+            log: false,
             drawCollider: false,
             drawGizmo: false,
             logCollisions: false,
@@ -29,6 +29,7 @@ class App {
             drawCollisionPoints: false,
             logCollisionErrors: true,
             drawCollisionErrors: true,
+            paddleBot: false
         };
     }
 
