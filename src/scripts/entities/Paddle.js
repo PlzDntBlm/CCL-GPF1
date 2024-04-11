@@ -38,30 +38,45 @@ export class Paddle extends GameObject {
         }
     }
 
+    // Example modification to the OnCollision method or collision handling logic
     OnCollision(other) {
         if (other instanceof Tile) {
-            console.log("Tile")
-            // Assuming the collision detection has determined there is overlap
-            const tileLeft = other.collider.x;
-            const tileRight = other.collider.x + other.collider.width;
-            const paddleLeft = this.collider.x;
-            const paddleRight = this.collider.x + this.collider.width;
+            const overlap = this.calculateOverlap(this, other);
+            this.correctPositionBasedOnOverlap(this, other, overlap);
 
-            // Calculate horizontal overlap
-            const overlapRight = paddleRight - tileLeft; // Paddle moving right into tile
-            const overlapLeft = tileRight - paddleLeft; // Paddle moving left into tile
+            // Neutralize velocity towards the tile
+            this.rigidbody.velocity.x = 0;
 
-            if (this.rigidbody.velocity.x > 0 && overlapRight > 0) { // Moving right
-                this.transform.position.x -= overlapRight; // Move paddle left by overlap amount
-                this.rigidbody.velocity.x = 0; // Stop horizontal movement
-            } else if (this.rigidbody.velocity.x < 0 && overlapLeft > 0) { // Moving left
-                this.transform.position.x += overlapLeft; // Move paddle right by overlap amount
-                this.rigidbody.velocity.x = 0; // Stop horizontal movement
-            }
-
-            // After adjusting position, ensure the collider is also updated
-            this.updateColliderPosition();
+            // Ignore further input in the collision direction for a brief period
+            // Determine direction based on overlap; if overlap is negative, collision was towards the right
+            this.ignoreInputDirection = overlap.x < 0 ? 'right' : 'left';
+            this.ignoreInputUntil = Date.now() + 200; // Ignore input for 200ms
         }
+    }
+
+
+    calculateOverlap(paddle, tile) {
+        // Assuming AABB collision detection for both paddle and tile
+        const paddleRight = paddle.collider.x + paddle.collider.width;
+        const paddleLeft = paddle.collider.x;
+        const tileRight = tile.collider.x + tile.collider.width;
+        const tileLeft = tile.collider.x;
+
+        // Calculate horizontal overlap
+        const overlapRight = paddleRight - tileLeft;
+        const overlapLeft = tileRight - paddleLeft;
+
+        return {
+            x: overlapRight < overlapLeft ? -overlapRight : overlapLeft, // Negative overlap for rightward collisions
+        };
+    }
+
+    correctPositionBasedOnOverlap(paddle, tile, overlap) {
+        // Correct paddle position based on overlap
+        paddle.transform.position.x += overlap.x;
+
+        // After adjusting the position, ensure the collider is also updated
+        paddle.collider.x = paddle.transform.position.x;
     }
 
 
@@ -116,11 +131,21 @@ export class Paddle extends GameObject {
     }
 
     HandleInput() {
-        if (Game.Instance.Keys.ArrowLeft)
-            this.moveLeft();
-        else if (Game.Instance.Keys.ArrowRight)
-            this.moveRight();
+        if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'left' && Game.Instance.Keys.ArrowLeft) {
+            // Ignore left input
+        } else if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'right' && Game.Instance.Keys.ArrowRight) {
+            // Ignore right input
+        } else {
+            // Handle input normally
+            // Assuming left/right movement
+            if (Game.Instance.Keys.ArrowLeft) {
+                this.moveLeft();
+            } else if (Game.Instance.Keys.ArrowRight) {
+                this.moveRight();
+            }
+        }
     }
+
 
     updateColliderPosition() {
         // Update the collider position to match the new position of the paddle
