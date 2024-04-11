@@ -3,6 +3,8 @@ import {CircleCollider} from "../utils/collider/CircleCollider.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {GameObject} from "./GameObject.js";
 import {Tile} from "./Tile.js";
+import {Ball} from "./Ball.js";
+import {Paddle} from "./Paddle.js";
 
 export class GameObjectManager {
     static Instance = null;
@@ -45,55 +47,62 @@ export class GameObjectManager {
     }
 
     handleCollisions() {
-        let processedCollisions = new Set();
+        // Filter out dynamic objects (Ball, Paddle) and static objects (Tile)
+        let dynamicObjects = this.gameObjects.filter(obj => obj instanceof Ball || obj instanceof Paddle);
+        let staticObjects = this.gameObjects.filter(obj => obj instanceof Tile);
 
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            if ((this.gameObjects[i] instanceof Tile)) continue;
-            for (let j = i + 1; j < this.gameObjects.length; j++) {
-                if ((this.gameObjects[j] instanceof Tile)) continue;
-                let objA = this.gameObjects[i];
-                let objB = this.gameObjects[j];
-
-                // Create a unique identifier for the collision pair
-                let collisionId = `${Math.min(objA.id, objB.id)}-${Math.max(objA.id, objB.id)}`;
-
-                // Skip this pair if the collision has already been processed
-                if (processedCollisions.has(collisionId)) {
-                    continue;
+        dynamicObjects.forEach(dynamicObj => {
+            staticObjects.forEach(staticObj => {
+                // Perform collision checks only if both objects have colliders
+                if (dynamicObj.collider && staticObj.collider) {
+                    let result = this.checkCollision(dynamicObj, staticObj);
+                    // Process collision result
+                    if (result && result.intersects) {
+                        this.processCollision(dynamicObj, staticObj, result);
+                    }
                 }
+            });
 
-                // Check for collisions and process them
-                let result = null;
-
-                if (objA.collider instanceof CircleCollider && objB.collider instanceof AABB) {
-                    result = objA.collider.intersectsAABB(objB.collider);
-                } else if (objA.collider instanceof AABB && objB.collider instanceof CircleCollider) {
-                    result = objB.collider.intersectsAABB(objA.collider);
-                } else if (objA.collider instanceof AABB && objB.collider instanceof AABB) {
-                    result = objA.collider.intersects(objB.collider);
+            // Perform dynamic-to-dynamic collision checks (e.g., Ball to Paddle)
+            dynamicObjects.forEach(otherDynamicObj => {
+                if (dynamicObj !== otherDynamicObj && dynamicObj.collider && otherDynamicObj.collider) {
+                    let result = this.checkCollision(dynamicObj, otherDynamicObj);
+                    // Process collision result
+                    if (result && result.intersects) {
+                        this.processCollision(dynamicObj, otherDynamicObj, result);
+                    }
                 }
+            });
+        });
+    }
 
-                // If a collision is detected, handle it
-                if (result && result.intersects) {
-                    // Log collision if debugging is enabled
-                    if (myApp.debug.logCollisions) console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
-                    if (myApp.debug.drawCollisionPoints) GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
-                    if (myApp.debug.logCollisionPoints) console.log(result.collisionPoint);
+// Helper function for checking collision between two objects
+    checkCollision(objA, objB) {
+        if (objA.collider instanceof CircleCollider && objB.collider instanceof AABB) {
+            return objA.collider.intersectsAABB(objB.collider);
+        } else if (objA.collider instanceof AABB && objB.collider instanceof CircleCollider) {
+            return objB.collider.intersectsAABB(objA.collider);
+        } else if (objA.collider instanceof AABB && objB.collider instanceof AABB) {
+            return objA.collider.intersects(objB.collider);
+        }
+        return null; // No collision detected or invalid collider types
+    }
 
-
-                    // Call collision handlers for both objects
-                    objA.OnCollision(objB, result.collisionPoint);
-                    //console.log(objB)
-                    objB.OnCollision(objA, result.collisionPoint);
-
-                    // Add this pair to the set of processed collisions
-                    processedCollisions.add(collisionId);
-                }
-            }
+// Helper function for logging collision and calling the OnCollision methods
+    processCollision(objA, objB, result) {
+        if (myApp.debug.logCollisions) {
+            console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);
+        }
+        if (myApp.debug.drawCollisionPoints) {
+            GameObjectManager.drawGizmo(result.collisionPoint.x, result.collisionPoint.y);
+        }
+        if (myApp.debug.logCollisionPoints) {
+            console.log(result.collisionPoint);
         }
 
-        // Clear the processedCollisions set for the next update cycle
-        processedCollisions.clear();
+        // Call collision handlers for both objects
+        objA.OnCollision(objB, result.collisionPoint);
+        objB.OnCollision(objA, result.collisionPoint);
     }
 
 

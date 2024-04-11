@@ -117,18 +117,22 @@ export class Ball extends GameObject {
     // }
 
     OnCollision(other, collisionPoint) {
-        if (other instanceof Tile) {
-
-        }
-        // In the OnCollision method for the Ball, when colliding with the Paddle
         if (other instanceof Paddle) {
-            let overlap = (this.transform.position.y + this.transform.sizeInPixel.y) - (Game.Instance.paddle.transform.position.y);
-            // Reposition just inside the boundary
-            this.transform.position.x -= overlap;
-            // Then reverse velocity
-            this.velocity.y *= -1;
+            let overlapY = (this.transform.position.y + this.transform.sizeInPixel.y) - other.transform.position.y;
+            this.transform.position.y -= overlapY + 1; // Ensure separation
+
+            // Only reverse the y-velocity if the ball is moving downwards
+            if (this.velocity.y > 0) {
+                this.velocity.y *= -1;
+            }
+
+            // Optional: Dynamic bounce off the paddle
+            let hitPos = (this.transform.position.x + (this.transform.sizeInPixel.x / 2)) - (other.transform.position.x + (other.transform.sizeInPixel.x / 2));
+            let influenceFactor = 0.05;
+            this.velocity.x += hitPos * influenceFactor;
         }
     }
+
 
     Render() {
         myApp.context.drawImage(this.renderer.image, Math.round(this.transform.position.x), Math.round(this.transform.position.y), this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
