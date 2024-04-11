@@ -16,9 +16,11 @@ export class Ball extends GameObject {
         this.renderer.image.src = myApp.assetsPath + this.renderer.imageSrc;
         this.speed = 0.08;
         this.velocity = {
-            x: 1,
-            y: 1
+            x: 0,
+            y: -1
         }
+        this.boundToPaddle = true;
+        this.paddleOffset = 1;
         console.log("Loaded Ball Image");
 
         this.solid = true;
@@ -37,9 +39,13 @@ export class Ball extends GameObject {
 
     Update(deltaTime) {
         this.transform.previousPosition = this.transform.position;
-
-        this.transform.position.x = this.transform.position.x + this.velocity.x * this.speed * deltaTime;
-        this.transform.position.y = this.transform.position.y + this.velocity.y * this.speed * deltaTime;
+        if (this.boundToPaddle) {
+            this.transform.position.x = Game.Instance.paddle.transform.position.x - this.transform.sizeInPixel.x / 2 + Game.Instance.paddle.transform.sizeInPixel.x / 2;
+            this.transform.position.y = Game.Instance.paddle.transform.position.y + this.paddleOffset;
+        } else {
+            this.transform.position.x = this.transform.position.x + this.velocity.x * this.speed * deltaTime;
+            this.transform.position.y = this.transform.position.y + this.velocity.y * this.speed * deltaTime;
+        }
         // Round positions after collision resolution
         //this.transform.position.x = Math.round(this.transform.position.x);
         //this.transform.position.y = Math.round(this.transform.position.y);
@@ -49,21 +55,25 @@ export class Ball extends GameObject {
         this.collider.y = this.transform.position.y + this.collider.radius;
 
 
-        // Handle Y-axis boundaries (top and bottom)
-        if (this.transform.position.y - 16 <= 0) {
-            // Calculate overlap
-            let overlap = Math.abs(this.transform.position.y - 16);
-            // Reposition just inside the boundary
-            this.transform.position.y += overlap;
-            // Then reverse velocity
-            this.velocity.y *= -1;
-        } else if (this.transform.position.y + this.transform.sizeInPixel.y >= myApp.canvas.height) {
-            // Calculate overlap
-            let overlap = Math.abs((this.transform.position.y + this.transform.sizeInPixel.y) - myApp.canvas.height);
-            // Reposition just inside the boundary
-            this.transform.position.y -= overlap;
-            // Then reverse velocity
-            this.velocity.y *= -1;
+        if (!this.boundToPaddle) {
+            // Handle Y-axis boundaries (top and bottom)
+            if (this.transform.position.y - 16 <= 0) {
+                // Calculate overlap
+                let overlap = Math.abs(this.transform.position.y - 16);
+                // Reposition just inside the boundary
+                this.transform.position.y += overlap;
+                // Then reverse velocity
+                this.velocity.y *= -1;
+            } else if (this.transform.position.y + this.transform.sizeInPixel.y >= myApp.canvas.height) {
+                // Calculate overlap
+                let overlap = Math.abs((this.transform.position.y + this.transform.sizeInPixel.y) - myApp.canvas.height);
+                // Reposition just inside the boundary
+                this.transform.position.y -= overlap;
+                // Then reverse velocity
+                this.velocity.y *= -1;
+
+                this.subtractLife();
+            }
         }
 
 
@@ -130,7 +140,34 @@ export class Ball extends GameObject {
             let hitPos = (this.transform.position.x + (this.transform.sizeInPixel.x / 2)) - (other.transform.position.x + (other.transform.sizeInPixel.x / 2));
             let influenceFactor = 0.02;
             this.velocity.x += hitPos * influenceFactor;
+        } else if (other instanceof Tile && other.tile.destructible) {
+            // Mark the tile for destruction if destructible
+            if (other.tile.destructible) {
+                other.toBeDestroyed = true; // Assuming Tile class has this flag
+            }
+
+            // Determine the collision direction to reverse the velocity correctly
+            const collisionDirection = this.determineCollisionDirection(this, other);
+            if (collisionDirection === 'horizontal') {
+                this.velocity.x *= -1;
+            } else if (collisionDirection === 'vertical') {
+                this.velocity.y *= -1;
+            }
         }
+    }
+
+    subtractLife() {
+        this.boundToPaddle = true;
+        Game.Instance.lifeMinus();
+    }
+
+    determineCollisionDirection(ball, tile) {
+        // Calculate the horizontal and vertical overlap
+        const horizontalOverlap = Math.abs(ball.transform.position.x - tile.transform.position.x);
+        const verticalOverlap = Math.abs(ball.transform.position.y - tile.transform.position.y);
+
+        // Determine if the collision is primarily horizontal or vertical
+        return horizontalOverlap > verticalOverlap ? 'horizontal' : 'vertical';
     }
 
 

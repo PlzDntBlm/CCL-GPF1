@@ -144,6 +144,11 @@ export class Paddle extends GameObject {
                 this.moveRight();
             }
         }
+        if (Game.Instance.Keys.Space) {
+            if (Game.Instance.ball.boundToPaddle) {
+                Game.Instance.ball.boundToPaddle = false;
+            }
+        }
     }
 
 

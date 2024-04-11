@@ -23,10 +23,10 @@ class App {
         this.debug = {
             log: true,
             drawCollider: false,
-            drawGizmo: true,
+            drawGizmo: false,
             logCollisions: false,
             logCollisionPoints: false,
-            drawCollisionPoints: true,
+            drawCollisionPoints: false,
             logCollisionErrors: true,
             drawCollisionErrors: true,
         };
@@ -71,4 +71,8 @@ class App {
 
         startResizing();
     }
+}
+
+export function Restart() {
+    //myApp = new App();
 }

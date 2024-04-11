@@ -3,7 +3,7 @@ import {GameObjectManager} from "../entities/GameObjectManager.js";
 //import {Tile} from "./src/entities/Tile.js";
 import {Scene} from "../scenes/Scene.js";
 import {TileSet} from "../scenes/Tilemaps/TileSet.js";
-import {myApp} from "../../../app.js";
+import {myApp, Restart} from "../../../app.js";
 import {Ball} from "../entities/Ball.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {CircleCollider} from "../utils/collider/CircleCollider.js";
@@ -16,8 +16,10 @@ class Game {
         this.tileSet = {};
         this.Keys = {
             ArrowLeft: false,
-            ArrowRight: false
+            ArrowRight: false,
+            Space: false
         }
+        this.lifes = 3;
         Game.Instance = this;
     }
 
@@ -74,6 +76,10 @@ class Game {
         // ...
     }
 
+    lifeMinus() {
+        if (this.lifes > 0) this.lifes--; else Restart();
+    }
+
     async startGame() {
         await this.Populate().then(() => {
             // Instantiate and start the game loop
@@ -84,10 +90,12 @@ class Game {
     SetupInputHandling() {
         document.addEventListener('keydown', (e) => {
             // Check if the key is one of the ones we're interested in
-            if (e.key === 'ArrowLeft') {
+            if (e.key === 'ArrowLeft' || e.key === 'a') {
                 this.Keys.ArrowLeft = true;
-            } else if (e.key === 'ArrowRight') {
+            } else if (e.key === 'ArrowRight' || e.key === 'd') {
                 this.Keys.ArrowRight = true;
+            } else if (e.key === ' ') {
+                this.Keys.Space = true;
             }
             // Prevent default to avoid any unwanted side effects (e.g., scrolling)
             e.preventDefault();
@@ -95,10 +103,12 @@ class Game {
 
         document.addEventListener('keyup', (e) => {
             // Check if the key is one of the ones we're interested in
-            if (e.key === 'ArrowLeft') {
+            if (e.key === 'ArrowLeft' || e.key === 'a') {
                 this.Keys.ArrowLeft = false;
-            } else if (e.key === 'ArrowRight') {
+            } else if (e.key === 'ArrowRight' || e.key === 'd') {
                 this.Keys.ArrowRight = false;
+            } else if (e.key === ' ') {
+                this.Keys.Space = false;
             }
             // Prevent default to avoid any unwanted side effects
             e.preventDefault();
