@@ -1,5 +1,5 @@
 export class Rigidbody {
-    constructor(mass, gravityScale, drag = 0.1) {
+    constructor(mass, gravityScale, drag = 0.001) {
         this.mass = mass;
         this.gravityScale = gravityScale;
         this.drag = drag;
@@ -32,7 +32,7 @@ export class Rigidbody {
     }
 
     applyDrag(deltaTime) {
-        if (!this.isGrounded) {
+        if (this.isGrounded) {
             // Apply drag only if the object is not grounded
             this.velocity.x -= this.velocity.x * this.drag * deltaTime;
             this.velocity.y -= this.velocity.y * this.drag * deltaTime;

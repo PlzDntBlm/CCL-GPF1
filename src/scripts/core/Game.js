@@ -14,6 +14,10 @@ class Game {
         console.log("Constructing Game");
         this.gameLoop = new GameLoop();
         this.tileSet = {};
+        this.Keys = {
+            ArrowLeft: false,
+            ArrowRight: false
+        }
         Game.Instance = this;
     }
 
@@ -46,10 +50,12 @@ class Game {
 
         // Initialize Ball
         this.ball = new Ball();
-        this.ball.transform.position.x = 16 * 5;
-        this.ball.transform.position.y = 16 * 7;
+        this.ball.transform.position.x = 16.0 * 5;
+        this.ball.transform.position.y = 16.0 * 7;
+        this.ball.transform.sizeInPixel.x = 4;
+        this.ball.transform.sizeInPixel.y = 4;
         this.ball.solid = true;
-        this.ball.collider = new CircleCollider(this.ball.transform.x, this.ball.transform.y, 8)
+        this.ball.collider = new CircleCollider(this.ball.transform.x, this.ball.transform.y, this.ball.transform.sizeInPixel.x / 2)
         this.ball.Init();
         this.gameObjectManager.addGameObject(this.ball);
 
@@ -77,11 +83,25 @@ class Game {
 
     SetupInputHandling() {
         document.addEventListener('keydown', (e) => {
+            // Check if the key is one of the ones we're interested in
             if (e.key === 'ArrowLeft') {
-                Game.Instance.paddle.moveLeft();
+                this.Keys.ArrowLeft = true;
             } else if (e.key === 'ArrowRight') {
-                Game.Instance.paddle.moveRight();
+                this.Keys.ArrowRight = true;
             }
+            // Prevent default to avoid any unwanted side effects (e.g., scrolling)
+            e.preventDefault();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            // Check if the key is one of the ones we're interested in
+            if (e.key === 'ArrowLeft') {
+                this.Keys.ArrowLeft = false;
+            } else if (e.key === 'ArrowRight') {
+                this.Keys.ArrowRight = false;
+            }
+            // Prevent default to avoid any unwanted side effects
+            e.preventDefault();
         });
     }
 }

@@ -2,6 +2,7 @@ import {myApp} from "../../../app.js";
 import {CircleCollider} from "../utils/collider/CircleCollider.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {GameObject} from "./GameObject.js";
+import {Tile} from "./Tile.js";
 
 export class GameObjectManager {
     static Instance = null;
@@ -47,7 +48,9 @@ export class GameObjectManager {
         let processedCollisions = new Set();
 
         for (let i = 0; i < this.gameObjects.length; i++) {
+            if ((this.gameObjects[i] instanceof Tile)) continue;
             for (let j = i + 1; j < this.gameObjects.length; j++) {
+                if ((this.gameObjects[j] instanceof Tile)) continue;
                 let objA = this.gameObjects[i];
                 let objB = this.gameObjects[j];
 

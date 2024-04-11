@@ -4,17 +4,21 @@ import {Rigidbody} from "./Rigidbody.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {Tile} from "./Tile.js";
 import {Paddle} from "./Paddle.js";
+import {Game} from "../core/Game.js";
 
 export class Ball extends GameObject {
     constructor() {
         super();
         this.renderer.imageSrc = '/images/Ball_0.png';
         this.renderer.drawMode = 'texture';
-        this.transform.sizeInPixel.x = 16;
-        this.transform.sizeInPixel.y = 16;
         this.renderer.redraw = true;
         this.renderer.image = new Image();
         this.renderer.image.src = myApp.assetsPath + this.renderer.imageSrc;
+        this.speed = 0.08;
+        this.velocity = {
+            x: 1,
+            y: 1
+        }
         console.log("Loaded Ball Image");
 
         this.solid = true;
@@ -22,37 +26,64 @@ export class Ball extends GameObject {
     }
 
     Init() {
-        this.rigidbody = new Rigidbody(1, 0.0005); //0.001
-        this.rigidbody.transform.position = {...this.transform.position};
+        //this.rigidbody = new Rigidbody(1, 0.0005); //0.001
+        //this.rigidbody.transform.position = {...this.transform.position};
         console.log("Assigned Ball position to Rigidbody");
         this.transform.previousPosition = {
-            x: this.rigidbody.transform.position.x,
-            y: this.rigidbody.transform.position.y
+            x: this.transform.position.x,
+            y: this.transform.position.y
         }
     }
 
     Update(deltaTime) {
         this.transform.previousPosition = this.transform.position;
-        this.rigidbody.isGrounded = false;
-        // Update the Rigidbody's physics
-        this.rigidbody.Update(deltaTime);
 
-        // Other player updates such as handling input
-        // ...
-        //this.handleInput();
-
-        //this.rigidbody.Update(deltaTime);
-        this.transform.position.x = this.rigidbody.transform.position.x;
-        this.transform.position.y = this.rigidbody.transform.position.y;
-
+        this.transform.position.x = this.transform.position.x + this.velocity.x * this.speed * deltaTime;
+        this.transform.position.y = this.transform.position.y + this.velocity.y * this.speed * deltaTime;
         // Round positions after collision resolution
-        this.transform.position.x = Math.round(this.transform.position.x);
-        this.transform.position.y = Math.round(this.transform.position.y);
+        //this.transform.position.x = Math.round(this.transform.position.x);
+        //this.transform.position.y = Math.round(this.transform.position.y);
 
         // Update the collider position to match the new position of the ball
         this.collider.x = this.transform.position.x + this.collider.radius;
         this.collider.y = this.transform.position.y + this.collider.radius;
 
+
+        // Handle Y-axis boundaries (top and bottom)
+        if (this.transform.position.y - 16 <= 0) {
+            // Calculate overlap
+            let overlap = Math.abs(this.transform.position.y - 16);
+            // Reposition just inside the boundary
+            this.transform.position.y += overlap;
+            // Then reverse velocity
+            this.velocity.y *= -1;
+        } else if (this.transform.position.y + this.transform.sizeInPixel.y >= myApp.canvas.height) {
+            // Calculate overlap
+            let overlap = Math.abs((this.transform.position.y + this.transform.sizeInPixel.y) - myApp.canvas.height);
+            // Reposition just inside the boundary
+            this.transform.position.y -= overlap;
+            // Then reverse velocity
+            this.velocity.y *= -1;
+        }
+
+
+        // Handle X-axis boundaries (left and right)
+        if (this.transform.position.x <= 16) {
+            // Calculate overlap; assuming the ball's position is at its center,
+            // you might need to adjust this calculation based on your positioning logic.
+            let overlap = 16 - this.transform.position.x;
+            // Reposition just inside the boundary
+            this.transform.position.x += overlap;
+            // Then reverse velocity
+            this.velocity.x *= -1;
+        } else if (this.transform.position.x + this.transform.sizeInPixel.x >= myApp.canvas.width - 16) {
+            // Calculate overlap
+            let overlap = (this.transform.position.x + this.transform.sizeInPixel.x) - (myApp.canvas.width - 16);
+            // Reposition just inside the boundary
+            this.transform.position.x -= overlap;
+            // Then reverse velocity
+            this.velocity.x *= -1;
+        }
 
         // Handle collisions
         // ...
@@ -86,39 +117,20 @@ export class Ball extends GameObject {
     // }
 
     OnCollision(other, collisionPoint) {
-        this.rigidbody.gravityScale = 0;
         if (other instanceof Tile) {
-            // Determine if the collision is more horizontal or vertical
-            // Assuming you have a way to calculate or store the last movement direction
-            if (Math.abs(this.rigidbody.velocity.x) > Math.abs(this.rigidbody.velocity.y)) {
-                // Horizontal collision
-                this.rigidbody.velocity.x *= -1;
-            } else {
-                // Vertical collision
-                this.rigidbody.velocity.y *= -1;
-            }
 
-            // Destroy the tile if it's a brick
-            if (other.isBrick) {
-                other.destroy();
-            }
         }
         // In the OnCollision method for the Ball, when colliding with the Paddle
         if (other instanceof Paddle) {
-            // Reverse y-velocity for the bounce
-            this.rigidbody.velocity.y *= -1;
-
-            // Adjust x-velocity based on collision point
-            let hitPos = this.transform.position.x - other.transform.position.x; // Relative hit position
-            let normalizedHitPos = (hitPos / (other.width / 2)); // Normalize based on paddle width
-            this.rigidbody.velocity.x += normalizedHitPos * this.bounceSpeedModifier; // Adjust x-velocity
+            let overlap = (this.transform.position.y + this.transform.sizeInPixel.y) - (Game.Instance.paddle.transform.position.y);
+            // Reposition just inside the boundary
+            this.transform.position.x -= overlap;
+            // Then reverse velocity
+            this.velocity.y *= -1;
         }
     }
 
     Render() {
-        this.transform.position.x = Math.round(this.transform.position.x);
-        this.transform.position.y = Math.round(this.transform.position.y);
-
-        myApp.context.drawImage(this.renderer.image, this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
+        myApp.context.drawImage(this.renderer.image, Math.round(this.transform.position.x), Math.round(this.transform.position.y), this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
     }
 }

@@ -22,10 +22,10 @@ class App {
         this.assetsPath = "./src/assets/";
         this.debug = {
             log: true,
-            drawCollider: false,
+            drawCollider: true,
             drawGizmo: true,
             logCollisions: false,
-            logCollisionPoints: true,
+            logCollisionPoints: false,
             drawCollisionPoints: true,
             logCollisionErrors: true,
             drawCollisionErrors: true,

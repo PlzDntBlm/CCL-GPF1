@@ -5,6 +5,7 @@ import {GameLoop} from "../core/GameLoop.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {Rigidbody} from "./Rigidbody.js";
 import {Tile} from "./Tile.js";
+import {Game} from "../core/Game.js";
 
 export class Paddle extends GameObject {
     constructor() {
@@ -20,12 +21,13 @@ export class Paddle extends GameObject {
 
         this.collider = new AABB(this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
 
-        this.acceleration = 100;
-        this.maxSpeed = 0.1;
+        this.acceleration = 200;
+        this.maxSpeed = 0.2;
     }
 
     Init() {
         this.rigidbody = new Rigidbody(1, 0);
+        this.rigidbody.drag = 0.008;
         this.rigidbody.terminalVelocity = 0;
         this.rigidbody.isGrounded = true;
         this.rigidbody.transform.position = {...this.transform.position};
@@ -38,38 +40,38 @@ export class Paddle extends GameObject {
 
     OnCollision(other) {
         if (other instanceof Tile) {
-            // Assuming `other` has a method to get its boundaries: left, right, top, bottom
-            const tileLeft = other.x;
-            const tileRight = other.x + other.width;
-            const tileTop = other.y;
-            const tileBottom = other.y + other.height;
+            // Tile boundaries
+            const tileLeft = other.collider.x;
+            const tileRight = other.collider.x + other.collider.width;
+            const tileTop = other.collider.y;
+            const tileBottom = other.collider.y + other.collider.height;
 
-            // Paddle's current position
-            const paddleLeft = this.transform.position.x;
-            const paddleRight = this.transform.position.x + this.transform.sizeInPixel.x;
-            const paddleTop = this.transform.position.y;
-            const paddleBottom = this.transform.position.y + this.transform.sizeInPixel.y;
+            // Paddle boundaries
+            const paddleLeft = this.collider.x;
+            const paddleRight = this.collider.x + this.collider.width;
+            const paddleTop = this.collider.y;
+            const paddleBottom = this.collider.y + this.collider.height;
 
-            // Assuming the paddle is moving horizontally only
+            // Calculate overlap on both axes
+            const overlapX = Math.min(paddleRight, tileRight) - Math.max(paddleLeft, tileLeft);
+            const overlapY = Math.min(paddleBottom, tileBottom) - Math.max(paddleTop, tileTop);
+
+            // Handle horizontal collision based on the direction of the paddle's movement
             if (this.rigidbody.velocity.x > 0) { // Moving right
-                // If the paddle's left side is colliding with the tile's right side
-                if (paddleLeft < tileRight && paddleRight > tileRight) {
-                    this.transform.position.x = tileRight; // Place the paddle to the right of the tile
-                }
+                // Correct the paddle's position to eliminate the overlap, effectively pushing it out of the tile
+                this.transform.position.x -= overlapX;
             } else if (this.rigidbody.velocity.x < 0) { // Moving left
-                // If the paddle's right side is colliding with the tile's left side
-                if (paddleRight > tileLeft && paddleLeft < tileLeft) {
-                    this.transform.position.x = tileLeft - this.transform.sizeInPixel.x; // Place the paddle to the left of the tile
-                }
+                this.transform.position.x += overlapX;
             }
 
-            // Stop the paddle's movement as it has collided with a tile
-            this.rigidbody.velocity.x = 0;
+            // Optionally, stop the paddle's movement on collision
+            // this.rigidbody.velocity.x = 0;
         }
     }
 
 
     Update(deltaTime) {
+        this.HandleInput();
         this.transform.previousPosition = this.transform.position;
 
         this.rigidbody.Update(deltaTime);
@@ -121,4 +123,10 @@ export class Paddle extends GameObject {
         }
     }
 
+    HandleInput() {
+        if (Game.Instance.Keys.ArrowLeft)
+            this.moveLeft();
+        else if (Game.Instance.Keys.ArrowRight)
+            this.moveRight();
+    }
 }

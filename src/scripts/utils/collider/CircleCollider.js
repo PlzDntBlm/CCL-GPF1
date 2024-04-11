@@ -42,7 +42,6 @@ export class CircleCollider extends Collider {
                     y: closestY + dy / distance * this.radius
                 }
             }
-            ;
             if (isNaN(collisionPoint.x) || isNaN(collisionPoint.y)) {
                 if (myApp.debug.logCollisionErrors) console.warn(closestX, closestY, dx, dy, distanceSquared, intersects)
                 this.promptCollisionDetails(collisionPoint);
@@ -57,7 +56,7 @@ export class CircleCollider extends Collider {
     // Method to draw the CircleCollider for debugging purposes
     draw() {
         myApp.context.beginPath();
-        myApp.context.arc(this.x, this.y, 8, 0, Math.PI * 2);
+        myApp.context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         myApp.context.strokeStyle = 'blue';
         myApp.context.stroke();
     }

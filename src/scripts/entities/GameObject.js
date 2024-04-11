@@ -11,8 +11,8 @@ export class GameObject {
 
         this.transform = {
             position: {
-                x: data.transform.position.x || 0,
-                y: data.transform.position.y || 0
+                x: data.transform.position.x || 0.0,
+                y: data.transform.position.y || 0.0
             },
             scale: {
                 x: data.transform.scale.x || 1,
