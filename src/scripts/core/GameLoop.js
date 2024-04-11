@@ -3,6 +3,7 @@ import {Game} from "./Game.js";
 
 export class GameLoop {
     static FrameCounter = 0;
+
     constructor() {
         this.lastRenderTime = 0;
         this.accumulatedTime = 0;
@@ -19,7 +20,7 @@ export class GameLoop {
             //this.FixedUpdate(this.fixedTimeStep);
             this.accumulatedTime -= this.fixedTimeStep;
         }
-
+        this.HandleInput();
         this.Update(deltaTime); // Updates positions of all game objects
         this.HandleCollisions(); // Checks and handles collisions
         this.Render(); // Renders the game objects to the canvas
@@ -48,5 +49,9 @@ export class GameLoop {
 
     HandleCollisions() {
         Game.Instance.gameObjectManager.handleCollisions();
+    }
+
+    HandleInput() {
+        Game.Instance.paddle.HandleInput();
     }
 }

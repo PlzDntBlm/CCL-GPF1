@@ -128,7 +128,7 @@ export class Ball extends GameObject {
 
             // Optional: Dynamic bounce off the paddle
             let hitPos = (this.transform.position.x + (this.transform.sizeInPixel.x / 2)) - (other.transform.position.x + (other.transform.sizeInPixel.x / 2));
-            let influenceFactor = 0.05;
+            let influenceFactor = 0.02;
             this.velocity.x += hitPos * influenceFactor;
         }
     }

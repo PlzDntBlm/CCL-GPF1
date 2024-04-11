@@ -52,6 +52,7 @@ export class GameObjectManager {
         let staticObjects = this.gameObjects.filter(obj => obj instanceof Tile);
 
         dynamicObjects.forEach(dynamicObj => {
+            dynamicObj.currentCollisions = [];
             staticObjects.forEach(staticObj => {
                 // Perform collision checks only if both objects have colliders
                 if (dynamicObj.collider && staticObj.collider) {

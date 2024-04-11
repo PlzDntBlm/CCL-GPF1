@@ -40,38 +40,32 @@ export class Paddle extends GameObject {
 
     OnCollision(other) {
         if (other instanceof Tile) {
-            // Tile boundaries
+            console.log("Tile")
+            // Assuming the collision detection has determined there is overlap
             const tileLeft = other.collider.x;
             const tileRight = other.collider.x + other.collider.width;
-            const tileTop = other.collider.y;
-            const tileBottom = other.collider.y + other.collider.height;
-
-            // Paddle boundaries
             const paddleLeft = this.collider.x;
             const paddleRight = this.collider.x + this.collider.width;
-            const paddleTop = this.collider.y;
-            const paddleBottom = this.collider.y + this.collider.height;
 
-            // Calculate overlap on both axes
-            const overlapX = Math.min(paddleRight, tileRight) - Math.max(paddleLeft, tileLeft);
-            const overlapY = Math.min(paddleBottom, tileBottom) - Math.max(paddleTop, tileTop);
+            // Calculate horizontal overlap
+            const overlapRight = paddleRight - tileLeft; // Paddle moving right into tile
+            const overlapLeft = tileRight - paddleLeft; // Paddle moving left into tile
 
-            // Handle horizontal collision based on the direction of the paddle's movement
-            if (this.rigidbody.velocity.x > 0) { // Moving right
-                // Correct the paddle's position to eliminate the overlap, effectively pushing it out of the tile
-                this.transform.position.x -= overlapX;
-            } else if (this.rigidbody.velocity.x < 0) { // Moving left
-                this.transform.position.x += overlapX;
+            if (this.rigidbody.velocity.x > 0 && overlapRight > 0) { // Moving right
+                this.transform.position.x -= overlapRight; // Move paddle left by overlap amount
+                this.rigidbody.velocity.x = 0; // Stop horizontal movement
+            } else if (this.rigidbody.velocity.x < 0 && overlapLeft > 0) { // Moving left
+                this.transform.position.x += overlapLeft; // Move paddle right by overlap amount
+                this.rigidbody.velocity.x = 0; // Stop horizontal movement
             }
 
-            // Optionally, stop the paddle's movement on collision
-            // this.rigidbody.velocity.x = 0;
+            // After adjusting position, ensure the collider is also updated
+            this.updateColliderPosition();
         }
     }
 
 
     Update(deltaTime) {
-        this.HandleInput();
         this.transform.previousPosition = this.transform.position;
 
         this.rigidbody.Update(deltaTime);
@@ -85,19 +79,17 @@ export class Paddle extends GameObject {
         this.transform.position.y = this.rigidbody.transform.position.y;
 
         // // Round positions after collision resolution
-        this.transform.position.x = Math.round(this.transform.position.x);
-        this.transform.position.y = Math.round(this.transform.position.y);
+        // this.transform.position.x = Math.round(this.transform.position.x);
+        // this.transform.position.y = Math.round(this.transform.position.y);
 
-        // Update the collider position to match the new position of the paddle
-        this.collider.x = this.transform.position.x;
-        this.collider.y = this.transform.position.y;
+        this.updateColliderPosition();
     }
 
     Render() {
         try {
             const img = new Image();
             img.src = myApp.assetsPath + this.renderer.imageSrc;
-            myApp.context.drawImage(img, this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
+            myApp.context.drawImage(img, Math.round(this.transform.position.x), Math.round(this.transform.position.y), this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
         } catch (e) {
             console.error(e);
         }
@@ -128,5 +120,11 @@ export class Paddle extends GameObject {
             this.moveLeft();
         else if (Game.Instance.Keys.ArrowRight)
             this.moveRight();
+    }
+
+    updateColliderPosition() {
+        // Update the collider position to match the new position of the paddle
+        this.collider.x = this.transform.position.x;
+        this.collider.y = this.transform.position.y;
     }
 }

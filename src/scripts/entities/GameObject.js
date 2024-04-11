@@ -29,6 +29,7 @@ export class GameObject {
             redraw: data.renderer.redraw || false,
             fillColor: data.renderer.fillColor || 'black',
         };
+        this.currentCollisions = [];
     }
 
     Update(deltaTime) {
@@ -57,6 +58,10 @@ export class GameObject {
             myApp.context.strokeStyle = this.renderer.fillColor;
             myApp.context.stroke();
         }
+    }
+
+    OnCollision(other, collisionPoint) {
+        this.currentCollisions.push({other: other, collisionPoint: collisionPoint});
     }
 
     /*Render(){
