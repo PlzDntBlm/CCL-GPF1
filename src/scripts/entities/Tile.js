@@ -3,6 +3,7 @@ import {TileSet} from "../scenes/Tilemaps/TileSet.js";
 import {myApp} from "../../../app.js";
 import {GameLoop} from "../core/GameLoop.js";
 import {AABB} from "../utils/collider/AABB.js";
+import {Ball} from "./Ball.js";
 
 export class Tile extends GameObject {
     constructor(data = {}) {
@@ -16,10 +17,11 @@ export class Tile extends GameObject {
         data.tile.position.row = data.tile.position.row || 0;
         data.tile.position.col = data.tile.position.col || 0;
         data.solid = data.solid || false;
+        data.destructible = data.destructible || false;
 
         this.tile = data.tile
         this.collider = this.tile.solid ? new AABB(data.tile.position.x, data.tile.position.y, 16, 16) : null;
-        //this.setTileType(data.tile.type);
+        this.toBeDestroyed = false;
 
         this.renderer.drawMode = 'texture';
         this.transform.sizeInPixel.x = 16;
@@ -53,7 +55,9 @@ export class Tile extends GameObject {
     }
 
     OnCollision(other) {
-
+        if (other instanceof Ball && this.tile.destructible) {
+            this.toBeDestroyed = true; // Flag the tile for removal
+        }
     }
 
 

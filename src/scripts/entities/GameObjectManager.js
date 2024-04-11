@@ -35,6 +35,11 @@ export class GameObjectManager {
 
 
     UpdateGameObjects(deltaTime) {
+        // Filter out tiles marked for destruction
+        this.gameObjects = this.gameObjects.filter(gameObject => {
+            return !(gameObject instanceof Tile && gameObject.toBeDestroyed);
+        });
+        
         this.gameObjects.forEach((gameObject) => {
             gameObject.Update(deltaTime);
         });
@@ -77,7 +82,7 @@ export class GameObjectManager {
         });
     }
 
-// Helper function for checking collision between two objects
+    // Helper function for checking collision between two objects
     checkCollision(objA, objB) {
         if (objA.collider instanceof CircleCollider && objB.collider instanceof AABB) {
             return objA.collider.intersectsAABB(objB.collider);
@@ -89,7 +94,7 @@ export class GameObjectManager {
         return null; // No collision detected or invalid collider types
     }
 
-// Helper function for logging collision and calling the OnCollision methods
+    // Helper function for logging collision and calling the OnCollision methods
     processCollision(objA, objB, result) {
         if (myApp.debug.logCollisions) {
             console.log('Collision detected between', objA.constructor.name, 'and', objB.constructor.name, result.collisionPoint);

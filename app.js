@@ -26,7 +26,7 @@ class App {
             drawGizmo: true,
             logCollisions: false,
             logCollisionPoints: false,
-            drawCollisionPoints: false,
+            drawCollisionPoints: true,
             logCollisionErrors: true,
             drawCollisionErrors: true,
         };

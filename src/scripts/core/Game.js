@@ -60,7 +60,7 @@ class Game {
         this.gameObjectManager.addGameObject(this.ball);
 
         // Initialize tiles
-        await scene.loadScene().then(() => {
+        await scene.loadScene(1).then(() => {
             this.gameObjectManager.addGameObjects(scene.tileMap);
         });
 

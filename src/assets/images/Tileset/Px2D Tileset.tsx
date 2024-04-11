@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.10.2" name="Px2D Tileset" tilewidth="16" tileheight="16" tilecount="256" columns="16">
- <image source="../Pyxel Spritesheet.png" width="256" height="256"/>
+ <image source="../Pyxel Spritesheet_alt.png" width="256" height="256"/>
  <tile id="0" type="Missing"/>
  <tile id="1" type="Wall_Brick_TopLeft_OuterCorner_Floor"/>
  <tile id="2" type="Wall_Brick_Top_Outer_Floor"/>
