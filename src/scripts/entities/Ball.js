@@ -139,12 +139,10 @@ export class Ball extends GameObject {
             let influenceFactor = 0.02;
             this.velocity.x += hitPos * influenceFactor;
         } else if (other instanceof Tile && other.tile.destructible) {
-            // Mark the tile for destruction if destructible
-            if (other.tile.destructible) {
-                other.toBeDestroyed = true; // Assuming Tile class has this flag
-            }
+            // Mark the tile for destruction
+            other.toBeDestroyed = true;
 
-            // Determine the collision direction to reverse the velocity correctly
+            // Use the improved collision direction determination
             const collisionDirection = this.determineCollisionDirection(this, other);
             if (collisionDirection === 'horizontal') {
                 this.velocity.x *= -1;
@@ -162,12 +160,26 @@ export class Ball extends GameObject {
     }
 
     determineCollisionDirection(ball, tile) {
-        // Calculate the horizontal and vertical overlap
-        const horizontalOverlap = Math.abs(ball.transform.position.x - tile.transform.position.x);
-        const verticalOverlap = Math.abs(ball.transform.position.y - tile.transform.position.y);
+        // Get the center positions of the ball and tile
+        const ballCenterX = ball.transform.position.x + ball.transform.sizeInPixel.x / 2;
+        const ballCenterY = ball.transform.position.y + ball.transform.sizeInPixel.y / 2;
+        const tileCenterX = tile.transform.position.x + tile.transform.sizeInPixel.x / 2;
+        const tileCenterY = tile.transform.position.y + tile.transform.sizeInPixel.y / 2;
 
-        // Determine if the collision is primarily horizontal or vertical
-        return horizontalOverlap > verticalOverlap ? 'horizontal' : 'vertical';
+        // Calculate differences
+        const dx = ballCenterX - tileCenterX;
+        const dy = ballCenterY - tileCenterY;
+
+        // Use the dimensions of the tile to scale these differences
+        const widthScaled = dx * (tile.transform.sizeInPixel.y / tile.transform.sizeInPixel.x);
+        const heightScaled = dy * (tile.transform.sizeInPixel.x / tile.transform.sizeInPixel.y);
+
+        // Determine the primary direction of the collision based on the scaled differences
+        if (Math.abs(widthScaled) > Math.abs(heightScaled)) {
+            return 'horizontal';
+        } else {
+            return 'vertical';
+        }
     }
 
 
