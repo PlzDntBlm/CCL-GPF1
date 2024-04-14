@@ -5,7 +5,6 @@ import {Scene} from "../scenes/Scene.js";
 import {TileSet} from "../scenes/Tilemaps/TileSet.js";
 import {myApp, Restart} from "../../../app.js";
 import {Ball} from "../entities/Ball.js";
-import {AABB} from "../utils/collider/AABB.js";
 import {CircleCollider} from "../utils/collider/CircleCollider.js";
 import {Paddle} from "../entities/Paddle.js";
 
@@ -90,9 +89,9 @@ class Game {
     SetupInputHandling() {
         document.addEventListener('keydown', (e) => {
             // Check if the key is one of the ones we're interested in
-            if (e.key === 'ArrowLeft' || e.key === 'a') {
+            if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') {
                 this.Keys.ArrowLeft = true;
-            } else if (e.key === 'ArrowRight' || e.key === 'd') {
+            } else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') {
                 this.Keys.ArrowRight = true;
             } else if (e.key === ' ') {
                 this.Keys.Space = true;
@@ -103,9 +102,9 @@ class Game {
 
         document.addEventListener('keyup', (e) => {
             // Check if the key is one of the ones we're interested in
-            if (e.key === 'ArrowLeft' || e.key === 'a') {
+            if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') {
                 this.Keys.ArrowLeft = false;
-            } else if (e.key === 'ArrowRight' || e.key === 'd') {
+            } else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') {
                 this.Keys.ArrowRight = false;
             } else if (e.key === ' ') {
                 this.Keys.Space = false;

@@ -1,7 +1,5 @@
 import {GameObject} from "./GameObject.js";
 import {myApp} from "../../../app.js";
-import {Rigidbody} from "./Rigidbody.js";
-import {AABB} from "../utils/collider/AABB.js";
 import {Tile} from "./Tile.js";
 import {Paddle} from "./Paddle.js";
 import {Game} from "../core/Game.js";
@@ -9,7 +7,7 @@ import {Game} from "../core/Game.js";
 export class Ball extends GameObject {
     constructor() {
         super();
-        this.renderer.imageSrc = '/images/Ball_0.png';
+        this.renderer.imageSrc = '/images/Ball8_0.png';
         this.renderer.drawMode = 'texture';
         this.renderer.redraw = true;
         this.renderer.image = new Image();
