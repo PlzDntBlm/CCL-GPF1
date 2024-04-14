@@ -63,16 +63,4 @@ export class GameObject {
     OnCollision(other, collisionPoint) {
         this.currentCollisions.push({other: other, collisionPoint: collisionPoint});
     }
-
-    /*Render(){
-        if(this.renderer.drawMode === 'rect'){
-            this.context.beginPath();
-            this.context.fillStyle = this.renderer.fillColor;
-            this.context.fillRect(this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
-            this.context.stroke();
-        }
-        if(this.renderer.drawMode === 'texture'){
-            this.context.drawImage(this.renderer.imageSrc, this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
-        }
-    }*/
 }

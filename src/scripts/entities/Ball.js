@@ -92,37 +92,7 @@ export class Ball extends GameObject {
             // Then reverse velocity
             this.velocity.x *= -1;
         }
-
-        // Handle collisions
-        // ...
     }
-
-    // In Ball.js's OnCollision method
-    // OnCollision(other, collisionPoint) {
-    //     if (other instanceof Tile && other.collider instanceof AABB) {
-    //         this.rigidbody.gravityScale = 0;
-    //         // Reverse the velocity as a simple response
-    //         this.rigidbody.velocity.x = -this.rigidbody.velocity.x;
-    //         this.rigidbody.velocity.y = -this.rigidbody.velocity.y;
-    //
-    //         // Calculate the overlap between the ball and the tile
-    //         const overlapX = (this.collider.radius + other.collider.width / 2) - Math.abs(this.transform.previousPosition.x - (other.collider.x + other.collider.width / 2));
-    //         const overlapY = (this.collider.radius + other.collider.height / 2) - Math.abs(this.transform.previousPosition.y - (other.collider.y + other.collider.height / 2));
-    //
-    //         // Reposition the ball outside of the tile's bounds by adjusting its position based on the overlap
-    //         if (overlapX < overlapY) {
-    //             // Horizontal collision
-    //             this.transform.position.x = this.transform.previousPosition.x + (overlapX + 1) * Math.sign(this.rigidbody.velocity.x);
-    //         } else {
-    //             // Vertical collision
-    //             this.transform.position.y = this.transform.previousPosition.y + (overlapY + 1) * Math.sign(this.rigidbody.velocity.y);
-    //         }
-    //
-    //         // Update the collider position to match the new position of the ball
-    //         this.collider.x = this.transform.position.x;
-    //         this.collider.y = this.transform.position.y;
-    //     }
-    // }
 
     OnCollision(other, collisionPoint) {
         if (other instanceof Paddle) {

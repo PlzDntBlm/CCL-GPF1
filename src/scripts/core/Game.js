@@ -53,15 +53,15 @@ class Game {
         this.ball = new Ball();
         this.ball.transform.position.x = 16.0 * 5;
         this.ball.transform.position.y = 16.0 * 7;
-        this.ball.transform.sizeInPixel.x = 8;
-        this.ball.transform.sizeInPixel.y = 8;
+        this.ball.transform.sizeInPixel.x = 4;
+        this.ball.transform.sizeInPixel.y = 4;
         this.ball.solid = true;
         this.ball.collider = new CircleCollider(this.ball.transform.x, this.ball.transform.y, this.ball.transform.sizeInPixel.x / 2)
         this.ball.Init();
         this.gameObjectManager.addGameObject(this.ball);
 
         // Initialize tiles
-        await scene.loadScene(2).then(() => {
+        await scene.loadScene(5).then(() => {
             this.gameObjectManager.addGameObjects(scene.tileMap);
         });
 

@@ -1,9 +1,5 @@
 import {Tile} from "../entities/Tile.js";
-import {Hub} from "../../assets/scenes/Hub.js";
 import {myApp} from "../../../app.js";
-import {GameObjectManager} from "../entities/GameObjectManager.js";
-import {Game} from "../core/Game.js";
-import {AABB} from "../utils/collider/AABB.js";
 
 export class Scene {
     constructor() {
@@ -90,19 +86,4 @@ export class Scene {
             })
             .catch(error => console.error('Error loading or parsing CSV:', error));
     }
-
-    // loadScene() {
-    //     let colCounter = 0;
-    //     let rowCounter = 0;
-    //     Hub.layers[0].data.forEach((tile) => { // Using arrow function
-    //         tile = --tile;
-    //         Scene.SetTileInTileMap(this.tileMap, tile, colCounter, rowCounter);
-    //         colCounter++;
-    //         if (colCounter % 16 === 0) {
-    //             rowCounter++;
-    //             colCounter = 0;
-    //         }
-    //     });
-    //     //console.log(Hub.layers[0].data);
-    // }
 }

@@ -1,7 +1,5 @@
 import {GameObject} from "./GameObject.js";
-import {TileSet} from "../scenes/Tilemaps/TileSet.js";
 import {myApp} from "../../../app.js";
-import {GameLoop} from "../core/GameLoop.js";
 import {AABB} from "../utils/collider/AABB.js";
 import {Rigidbody} from "./Rigidbody.js";
 import {Tile} from "./Tile.js";
@@ -22,16 +20,16 @@ export class Paddle extends GameObject {
         this.collider = new AABB(this.transform.position.x, this.transform.position.y, this.transform.sizeInPixel.x, this.transform.sizeInPixel.y);
 
         this.bot = {
-            inputMinTime : 20,
-            inputMaxTime : 250,
-            inputMinTimeOut : 50,
-            inputMaxTimeOut : 1000,
-            nextInputDate :  null
+            inputMinTime: 20,
+            inputMaxTime: 250,
+            inputMinTimeOut: 50,
+            inputMaxTimeOut: 1000,
+            nextInputDate: null
         };
         this.bot.inputMinTime = 250;
         this.bot.inputMinTimeOut = 50;
         this.bot.inputMaxTimeOut = 1000;
-        this.bot.nextInputDate =  null;
+        this.bot.nextInputDate = null;
 
         this.acceleration = 200;
         this.maxSpeed = 0.2;
@@ -97,10 +95,6 @@ export class Paddle extends GameObject {
 
         this.rigidbody.Update(deltaTime);
 
-        // Other player updates such as handling input
-        // ...
-        //this.handleInput();
-
         //this.rigidbody.Update(deltaTime);
         this.transform.position.x = this.rigidbody.transform.position.x;
         this.transform.position.y = this.rigidbody.transform.position.y;
@@ -143,13 +137,13 @@ export class Paddle extends GameObject {
     }
 
     HandleInput() {
-        if(myApp.debug.paddleBot){;
+        if (myApp.debug.paddleBot) {
             if (Date.now() < this.ignoreInputUntil) {
 
             } else {
                 this.paddleBot()
             }
-        }else {
+        } else {
             if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'left' && Game.Instance.Keys.ArrowLeft) {
                 // Ignore left input
             } else if (Date.now() < this.ignoreInputUntil && this.ignoreInputDirection === 'right' && Game.Instance.Keys.ArrowRight) {
@@ -179,7 +173,7 @@ export class Paddle extends GameObject {
 
         // Enhanced Movement Logic: Check for screen boundaries
         const atLeftEdge = this.transform.position.x <= 16;
-        const atRightEdge = this.transform.position.x + this.transform.sizeInPixel.x >= myApp.canvas.width -16;
+        const atRightEdge = this.transform.position.x + this.transform.sizeInPixel.x >= myApp.canvas.width - 16;
         if (this.bot.nextInputDate === null || Date.now() > this.bot.nextInputDate) {
 
             if (!atLeftEdge && ballCenter < paddleCenter) {
